@@ -1,0 +1,277 @@
+#!/usr/bin/perl
+# Example: pod2html --noindex --title "mkconf.pl"
+
+=pod
+
+(c) Copyright 2006
+
+=head1 NAME
+
+patch-epm-list - patch up generated epm lists
+
+=head1 SYNOPSIS
+
+	patch-epm-list -f[ile] PATCH-FILE [-h[elp]] [-d[ebug] N]
+		<EPMFILE >NEW-EPMFILE
+
+=head1 DESCRIPTION
+
+Process the EPMFILE, from stdin, and output the results to stdout.
+The PATCH-FILE is a perl file that defines the files that need
+special processing.  See the FILE section for the syntax details.
+
+'\$' in the file are replaced with '$$'.
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-file FILE>
+
+This is the config file for the patch-epm-list script.  It should
+be executable.  See the FILE section for the syntax details.
+
+=item B<-help>
+
+This help.
+
+=item B<-debug>
+
+If the debug level is set to 5 or more, debug text will be output to
+stderr.
+
+=back
+
+=head1 EXAMPLES
+
+ File: epm.patch contains:
+	$pConf{"/etc/hosts"} = 1;
+	$pConf{"/etc/php.ini"} = 1;
+	$pDel{"/usr"} = 1;
+	$pDel{"/usr/local"} = 1;
+	$pOwner{"/var/www/html"} = "apache apache";
+	$pPerm{"/etc/php.ini"} = "310";
+	$pNoStrip{"/usr/lib/libacl.a"} = 1;
+
+ mkepmlist -u root -g root --prefix / dist | \
+   patch-epm-list -f epm.patch >epm.list
+
+=head1 FILES
+
+Config File:
+
+=over 4
+
+=item B<$pConf{"FILE"} = 1;>
+
+If the fifth field matches any of the FILE keys, then these lines will
+have the leading 'f' changed to a 'c'.
+
+=item B<$pDel{"FILE"} = 1;>
+
+If the fifth field matches any of the FILE keys, then these lines will
+not be output (i.e. they will be deleted).
+
+=item B<$pNoStrip{"FILE"} = 1;>
+
+If the fifth field matches any of the FILE keys, then those lines will
+have "nostrip()" appended.
+
+=item B$pOwner{"/var/www/html"} = "USER GROUP";>
+
+If the fifth field matches a FILE key, then the user and group will be
+changed for that line.
+
+=item B<$pPerm{"FILE"} = "MODE";>
+
+If the fifth field matches a FILE key, then the permissions will be
+changed for that line.  MODE is the octal format.
+
+=back
+
+=head1 SEE ALSO
+
+mkver.pl(1), epm(1), epminstall(1), mkepmlist(1), epm.list(5)
+
+mkepmlist, epm
+
+=head1 AUTHOR
+
+Bruce Rafnel
+
+=head1 HISTORY
+
+(c) Copyright 2006
+
+=cut
+
+# ---------------------------------------------------
+# Function
+sub fMsg {
+	# Input:
+	#	Args:
+	#	 	$pLevel
+	#			0 - fatal error, die
+	#			1 - error
+	#			2 - warning
+	#			3 - normal
+	#			4 - normal, output if $pVerbose
+	#			5 or more - output if $pDebug >= $pLevel
+	#		$pMsg - message text
+	#		[$pProg] - __FILE__ 
+	#		[$pLine] - __LINE__
+	#		[$pFile] - output $pFile and $. if specified
+	#	$gpDebug
+	#	$gpVerbose
+	# Output:
+	#	warn ...
+	my $pFile;
+	my $pLevel;
+	my $pLine;
+	my $pMsg;
+	my $pProg;
+	my $tFile;
+	my $tLoc;
+	my $tMsg;
+
+	($pLevel, $pMsg, $pProg, $pLine, $pFile) = @_;
+	if ($pLevel == 0) {
+		$tLevel = "Fatal Error: ";
+	} elsif ($pLevel == 1) {
+		$tLevel = "Error: ";
+	} elsif ($pLevel == 2) {
+		$tLevel = "Warning: ";
+	} elsif ($pLevel == 3) {
+		$tLevel = "";
+	} elsif ($pLevel == 4 && $gpVerbose) {
+		$tLevel = "";
+	} elsif ($gpDebug >= $pLevel) {
+		$tLevel = "Debug" . $pLevel . ": ";
+	} else {
+		return;
+	}
+	$tLoc = "";
+	if ($pProg ne "") {
+		$pProg =~ s/.+\///;
+		$tLoc = " [" . $pProg . ":" . $pLine . "]";
+	}
+	$tFile = "";
+	if ($pFile ne "") {
+		$tFile =  " (" . $pFile . ":" . $. . ")";
+	}
+	$tMsg = $tLevel . $pMsg . $tFile . $tLoc . "\n";
+	if ($pLevel != 0) {
+		warn $tMsg;
+	} else {
+		die $tMsg;
+	}
+	return;
+} # fMsg
+
+# ---------------------------------------------------
+# Main
+
+$| = 1;
+$gPath = $0;
+$gPath =~ s![/][^/]*?$!!;
+$gCurDir = readpipe 'pwd';
+chomp $gCurDir;
+chdir $gPath;
+$gPath = readpipe 'pwd';
+chomp $gPath;
+chdir $gCurDir;
+
+push @INC,"/usr/local/bin";
+push @INC,"$gPath";
+
+use Env;
+use Getopt::Long;
+
+$gpDebug = 0;
+$gpHelp = 0;
+$gpVerbose = 0;
+$gpFile = "";
+&GetOptions(
+	"file:s" => \$gpFile,
+	"debug:s" => \$gpDebug,
+	"help" => \$gpHelp,
+	"verbose" => \$gpVerbose,
+);
+
+if ($gpHelp) {
+	system("pod2text $0 | more");
+	exit 1;
+}
+
+&fMsg(5, "Start", __FILE__, __LINE__);
+
+if (! -x $gpFile) {
+	&fMsg(0, "$gpFile can not be found or is not executable", __FILE__, __LINE__);
+}
+require $gpFile;
+
+my $tLine;
+my $tType;
+my $tMode;
+my $tUser;
+my $tGroup;
+my $tDistSrc;
+my $tDist;
+my $tSrc;
+my $tOther;
+
+while (<>) {
+	$tLine = $_;
+	chomp $tLine;
+
+	($tType, $tMode, $tUser, $tGroup, $tDistSrc) = split(/[\t ]+/,$tLine,5);
+	# File names may contain blanks: "\ ", so this hack is needed
+	$tDistSrc =~ s/\\ /|/g;
+	($tDist, $tSrc) = split(/[\t ]+/,$tDistSrc);
+	$tDist =~ s/\|/\\ /g;
+	$tSrc =~ s/\|/\\ /g;
+
+	$tOther = "";
+	&fMsg(6, "tLine=$tLine", __FILE__, __LINE__);
+	&fMsg(6, "\t tType=" . $tType, __FILE__, __LINE__);
+	&fMsg(6, "\t tMode=" . $tMode, __FILE__, __LINE__);
+	&fMsg(6, "\t tUser=" . $tUser, __FILE__, __LINE__);
+	&fMsg(6, "\t tGroup=" . $tGroup, __FILE__, __LINE__);
+	&fMsg(6, "\t tFile=" . $tDist, __FILE__, __LINE__);
+	&fMsg(6, "\t tDist=" . $tSrc, __FILE__, __LINE__);
+
+	if ($pDel{$tDist} == 1) {
+		&fMsg(6, "\t DEL", __FILE__, __LINE__);
+		next;
+	}
+
+	if ($pConf{$tDist} == 1) {
+		if ($tType eq "f") {
+			&fMsg(6, "\t CONF", __FILE__, __LINE__);
+			$tType = "c";
+		}
+	}
+
+	if (exists $pPerm{$tDist}) {
+		&fMsg(6, "\t PERM", __FILE__, __LINE__);
+		$tMode = $pPerm{$tDist};
+	}
+
+	if (exists $pOwner{$tDist}) {
+		&fMsg(6, "\t OWNER", __FILE__, __LINE__);
+		($tUser, $tGroup) = split(/ +/, $pOwner{$tDist});
+	}
+
+	if ($pNoStrip{$tDist} == 1) {
+		if ($tType eq "f") {
+			&fMsg(6, "\t NOSTRIP", __FILE__, __LINE__);
+			$tOther = "nostrip()";
+		}
+	}
+
+#	$tDist =~ s/\\\$/\$\$/g;
+#	$tSrc =~ s/\\\$/\$\$/g;
+	print "$tType $tMode $tUser $tGroup $tDist $tSrc $tOther\n";
+}
+
+&fMsg(5, "Done", __FILE__, __LINE__);
