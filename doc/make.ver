@@ -1,0 +1,100 @@
+# Generate make.env - this is only used to set the OS and Rel vars,
+# for use in a Makefile
+
+# mkver.pl -d contrib/make.ver -e env
+# chmod a+rx make.env
+# . ./make.env
+# Now the env var in make.env can be used in a Makefile, e.g. ProdOS
+
+# Input file for: mkver.pl.  All variables must have
+# "export " at the beginning.  No spaces around the
+# "=".  And all values enclosed with double quotes.
+# Variables may include other variables in their
+# values.
+
+# Set this to latest version of mkver.pl
+export MkVer=2.2
+
+export ProdName="CHANGE-THIS"
+# One word [-_.a-zA-Z0-9]
+
+export ProdVer="0.1"
+# [0-9]*.[0-9]*{.[0-9]*}
+
+export ProdBuild="1"
+# [0-9]*
+
+export ProdSummary="Only the OS and Rel vars should be used"
+# All on one line (< 80 char)
+
+export ProdDesc=""
+# All on one line
+
+export ProdVendor=""
+
+export ProdPackager="$USER"
+export ProdSupport="support\@COMPANY.com"
+export ProdCopyright=""
+
+export ProdDate=""
+# 20[0-9][0-9]-[01][0-9]-[0123][0-9]
+
+export ProdLicense="LICENSE"
+# Required
+
+export ProdReadMe="README"
+# Required
+
+# Third Party (if any)
+export ProdTPVendor=""
+export ProdTPVer=""
+export ProdTPCopyright=""
+
+export ProdRelServer="moria.whyayh.com"
+export ProdRelRoot="/rel"
+export ProdRelCategory="software/own/$ProdName"
+# Generated: ProdRelDir=ProdRelRoot . /released|development/ . ProdRelCategory
+# (if RELEASE=1, then use "released", else use "development")
+# Generated: ProdDevDir=ProdRelRoot/development/ProdRelCategory
+
+# Generated: ProdTag=ProdVer-ProdBuild
+# (All "." converted to "-")
+
+# Generated: ProdOS (DistVer)
+#	Dist
+#		Ver
+# linux
+# 	deb
+#		3
+#		4
+#	ubuntu
+#		16
+#		18
+#	mx
+#		19
+#		20
+# 	rhes
+# 	cent
+# 	fc
+# cygwin
+#	cygwin
+# mswin32
+#	win
+#		xp
+# solaris
+#	sun
+# darwin
+#	mac
+
+# Generated: ProdArch
+# i386
+# x86_64
+
+# Output file control variables.
+# The *File vars can include dir. names
+# The *Header and *Footer defaults are more complete
+# than what is shown here.
+
+export envFile="make.env"
+export envHeader=""
+export envFooter="export CurLogName=$USER\n"
