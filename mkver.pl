@@ -13,11 +13,11 @@ myver.pl
 
 =head1 SYNOPSIS
 
-	mkver [-h] [-d DEF] [-e 'EXT EXT ...']
+	mkver.pl [-h] [-d DEF] [-e 'EXT EXT ...']
 
 =head1 DESCRIPTION
 
-mkver is used to create standard include files, to define
+mkver.pl is used to create standard include files, to define
 release variables, which are used to categorize and version a
 module or tool.  Its main purpose is to normalized all of
 names and categorizations that are related to a product, and
@@ -46,7 +46,7 @@ header and footer text that should be output for each EXT:
 (EXT)Header, (EXT)Footer.
 
 The simplest way to see the default definitions and variable
-transformations is to run mkver, and specify a DEF file
+transformations is to run mkver.pl, and specify a DEF file
 that doesn't exist.  You can then look at the DEF file that
 was created, and at the generated files.
 
@@ -54,28 +54,27 @@ was created, and at the generated files.
 
 =over 4
 
-=item B<-h elp>
+=item B<-h|-help>
 
 This help
 
-=item B<-d ef DEF>
+=item B<-d|-def DEF>
 
-Path and name of the master version definition file.
-The basename part of the file name will be used to for
-the basename of the version include files.
+Path and name of the master version definition file (DEF).  The
+basename part of the file name will be used for the basename of the
+version include files.
 
  Default: ./ver.sh
  Default basename: ver
 
-=item B<-e xtension EXT>
+=item B<-e|-extension EXT>
 
-A space separated list of extentions, that will be
-generated.  If no -e option is used, then all files
-will be generated.
+A space separated list of extentions, that will be generated.  If no
+-e option is used, then all files will be generated.
 
- Default: -e 'env epm'
+ Default: -e 'cs env epm h java mak pl xml'
 
-=item B<-v erbose>
+=item B<-v|-verbose>
 
 Output warnings and notices.  Errors will always be output.
 
@@ -91,7 +90,6 @@ Output debug messages.
 
 * If "ERROR" appears in an output file or in the default input file,
 this is a required variable that has to be manually defined.
-
 
 * Error: Syntax problem with: VARIABLE
 
@@ -140,11 +138,11 @@ patch-emp-list(1), epm(1), epminstall(1), mkepmlist(1), epm.list(5)
 
 =head1 AUTHOR
 
-Bruce Rafnel
+TurtleEngr
 
 =head1 HISTORY
 
-$Revision: 1.1 $
+MkVer=2.2
 
 =cut
 
@@ -276,7 +274,7 @@ if ($gDay < 10) {
 
 
 # Set the base version
-$cgMkVerBase = "2.1";
+$cgMkVerBase = "2.2";
 
 # Set General OS type
 $tOSGen = $^O;
@@ -288,7 +286,7 @@ $tOSGen =~ tr/[A-Z]/[a-z]/;
 # darwin
 
 # Set OS Distribution and Version
-if ($tOSGen eq "linux") {
+if (($tOSGen eq "linux") and (-f "/etc/issue.net")) {
 	$tDist = readpipe("head -n 1 /etc/issue.net");
 	chomp $tDist;
 	@tDist = split(/ +/, $tDist);
@@ -323,6 +321,14 @@ if ($tOSGen eq "linux") {
 		$tOSDist = $tOSGen;
 		$tOSVer = "0";
 	}
+} elsif (($tOSGen eq "linux") and (-f "/etc/lsb-release")) {
+	$tOSDist = readpipe("grep DISTRIB_ID= /etc/lsb-release");
+	chomp $tOSDist;
+	$tOSDist =~ s/DISTRIB_ID=//;
+	$tOSVer = readpipe("grep DISTRIB_RELEASE= /etc/lsb-release");
+	chomp $tOSVer;
+	$tOSVer =~ s/DISTRIB_RELEASE=//;
+	$tOSVer =~ s/ +$//;
 } elsif ($tOSGen eq "solaris") {
 	$tDist = readpipe("head -n 1 /etc/release");
 	chomp $tDist;
@@ -345,12 +351,17 @@ if ($tOSGen eq "linux") {
 }
 $tOSVer =~ s/\.[\.\d]+//;
 $ProdOS = $tOSDist . $tOSVer;
+$ProdOS =~ tr/[A-Z]/[a-z]/;
 
 # Set Architecture
 if ($tOSDist eq "deb") {
 	$tArch = readpipe("uname -m");
 } else {
 	$tArch = readpipe("uname -p");
+}
+chomp $tArch;
+if ($tArch eq "unknown") {
+	$tArch = readpipe("uname -m");
 }
 chomp $tArch;
 
@@ -921,7 +932,7 @@ foreach $i (
 	"ProdTPCopyright"
 ) {
 	$tVal=$$i;
-	print envF "$i=\"$tVal\"; export $i\n";
+	print envF "export $i=\"$tVal\"\n";
 	print hF "#define $i \"$tVal\"\n";
 	print javaF "public static final String $i = \"$tVal\";\n";
 	print csF "\"$i\", \"$tVal\",\n";
@@ -956,7 +967,7 @@ foreach $i (
 	"MkVer"
 ) {
 	$tVal=$$i;
-	print envF "$i=\"$tVal\"; export $i\n";
+	print envF "export $i=\"$tVal\"\n";
 	print makF "$i = $tVal\n";
 
 	$tValXML = $tVal;
@@ -967,7 +978,7 @@ foreach $i (
 }
 
 # Create a variable with the value of ProdOS
-print envF "ProdOS" . $ProdOS . "=1; export ProdOS" . $ProdOS . "\n";
+print envF "export ProdOS" . $ProdOS . "=1\n";
 
 print makF "$makFooter\n";
 print envF "$envFooter\n";
