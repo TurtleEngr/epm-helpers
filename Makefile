@@ -22,7 +22,7 @@ build epm.list : ver.mak doc/ver.sh.default
 	mkepmlist -u root -g root --prefix / dist | ./patch-epm-list -f ./epm.patch >epm.list
 
 clean :
-	-rm ver.cs ver.env ver.epm ver.h ver.java ver.mak ver.pl ver.xml >/dev/null 2>&1
+	-rm epm.list ver.cs ver.env ver.epm ver.h ver.java ver.mak ver.pl ver.xml >/dev/null 2>&1
 	-rm -rf dist tmp >/dev/null 2>&1
 	-find * -name '*~' -exec rm {} \; >/dev/null 2>&1
 
