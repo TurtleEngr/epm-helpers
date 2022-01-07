@@ -14,11 +14,18 @@ export ProdName="PRODNAME"
 export ProdAlias="PRODALIAS"
 # One word [-_.a-zA-Z0-9]
 
-export ProdVer="1.0"
+export ProdVer="0.1"
 # [0-9]*.[0-9]*{.[0-9]*}{.[0-9]*}
+
+export ProdRC=""
+# Release Candidate ver
 
 export ProdBuild="1"
 # [0-9.]*
+
+# Generated ProdBuildTime=YYYY.MM.DD.hh.mm
+# Generated ProdSemVer=ProdVer[-rc.ProdRC][+ProdBuildTime]
+# Generated ProdPkgName=ProdName-ProdVer[-rc.ProdRC]
 
 export ProdSummary="PRODSUMMARY"
 # All on one line (< 80 char)

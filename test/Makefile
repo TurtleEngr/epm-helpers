@@ -1,6 +1,7 @@
 
 test :
-	../mkver.pl -d ../contrib/make.ver -e env
+	-rm make.* ver.*
+	../mkver.pl -d ../doc/make.ver -e env
 	../mkver.pl
 
 clean :
