@@ -1,4 +1,3 @@
-
 # Input DEF file for: mkver.pl.  All variables must have "export "
 # at the beginning.  No spaces around the "=".  And all values
 # enclosed with double quotes.  Variables may include other variables
@@ -8,13 +7,13 @@
 # still work with newer versions of mkver.pl)
 export MkVer="2.2"
 
-export ProdName="PRODNAME"
+export ProdName="epm-helpers"
 # One word [-_.a-zA-Z0-9]
 
-export ProdAlias="PRODALIAS"
+export ProdAlias=""
 # One word [-_.a-zA-Z0-9]
 
-export ProdVer="0.1"
+export ProdVer="1.2"
 # [0-9]*.[0-9]*{.[0-9]*}{.[0-9]*}
 
 export ProdRC=""
@@ -27,17 +26,17 @@ export ProdBuild="1"
 # Generated ProdSemVer=ProdVer[-rc.ProdRC][+ProdBuildTime]
 # Generated ProdPkgName=ProdName-ProdVer[-rc.ProdRC]
 
-export ProdSummary="PRODSUMMARY"
+export ProdSummary="epm-helpers are programs that help with package building with the EPM tool"
 # All on one line (< 80 char)
 
-export ProdDesc="PRODDESC"
+export ProdDesc="EPM will build packages across many non-windows platforms. There is a lot of meta-data about products that needs to be kept consistent in all the files in the product. The a ver.sh file will define a single place for all meta-data components. mkver.sh will generate the different types of include files that may be used across different languges in your product."
 # All on one line
 
-export ProdVendor="COMPANY"
+export ProdVendor="TurtleEngr"
 
-export ProdPackager="$USER"
-export ProdSupport="support\@COMPANY.com"
-export ProdCopyright=""
+export ProdPackager="TurtleEngr"
+export ProdSupport="turtle.engr@gmail.com"
+export ProdCopyright="2021"
 
 export ProdDate=""
 # 20[0-9][0-9]-[01][0-9]-[0123][0-9]
@@ -45,7 +44,7 @@ export ProdDate=""
 export ProdLicense="LICENSE"
 # Required, usually a path
 
-export ProdReadMe="README"
+export ProdReadMe="README.md"
 # Required, usually a path
 
 # Third Party (if any) If repackaging a product, put in its version.
@@ -56,8 +55,8 @@ export ProdTPCopyright=""
 export ProdRelServer="rel.DOMAIN.com"
 export ProdRelRoot="/release/package"
 export ProdRelCategory="software/ThirdParty/$ProdName"
-# Generated: ProdRelDir=/release/package/released/software/ThirdParty/PRODNAME
-# Generated: ProdDevDir=/release/package/development/software/ThirdParty/PRODNAME
+# Generated: ProdRelDir=/var/www/rel/package/released/software/tid/jboss
+# Generated: ProdDevDir=/var/www/rel/package/development/software/tid/jboss
 
 # Generated: ProdTag=tag-ProdVer
 # (All "." in ProdVer converted to "-")
@@ -99,30 +98,6 @@ export epmFile="ver.epm"
 export epmHeader=""
 export epmFooter="# %include ver.list"
 
-export hFile="ver.h"
-export hHeader=""
-export hFooter=""
-
-export javaPackage="DIR.DIR.DIR"
-export javaInterface="ver"
-export javaFile="ver.java"
-export javaHeader=""
-export javaFooter=""
-
-export csNamespace="Supernode"
-export csClass="ver"
-export csFile="ver.cs"
-export csHeader=""
-export csFooter=""
-
 export makFile="ver.mak"
 export makHeader=""
 export makFooter=""
-
-export plFile="ver.pl"
-export plHeader=""
-export plFooter=""
-
-export xmlFile="ver.xml"
-export xmlHeader=""
-export xmlFooter=""

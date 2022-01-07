@@ -52,9 +52,10 @@ stderr.
 	$pOwner{"/var/www/html"} = "apache apache";
 	$pPerm{"/etc/php.ini"} = "310";
 	$pNoStrip{"/usr/lib/libacl.a"} = 1;
+ chmod a+rx epm.patch
 
  mkepmlist -u root -g root --prefix / dist | \
-   patch-epm-list -f epm.patch >epm.list
+   patch-epm-list -f ./epm.patch >epm.list
 
 =head1 FILES
 

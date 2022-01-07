@@ -5,7 +5,6 @@
 #
 #	make.env make.mak : make.ver
 #		 mkver.pl -d contrib/make.ver -e 'env mak'
-#		 chmod a+rx make.env
 #
 #	include ver.mak
 

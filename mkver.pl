@@ -576,6 +576,7 @@ export xmlHeader=\"\"
 export xmlFooter=\"\"
 ";
 	close(hDefOut);
+	chmod 0755, $gpDef;
 	&fDefEnv($gpDef);
 }
 
@@ -1006,3 +1007,7 @@ print envF "export ProdOS" . $ProdOS . "=1\n";
 print makF "$makFooter\n";
 print envF "$envFooter\n";
 print xmlF "$xmlFooter\n";
+
+if (-f $tVar{"envFile"}) {
+	chmod 0755, $tVar{"envFile"};
+}
