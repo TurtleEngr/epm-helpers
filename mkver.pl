@@ -851,7 +851,7 @@ if ($gpExt =~ / epm /) {
 $epmHeader
 %product $ProdSummary
 %version $ProdVer
-%release $ProdBuildTime
+%release $ProdBuild
 %packager $ProdPackager
 %vendor $ProdVendor
 %copyright $ProdCopyright
