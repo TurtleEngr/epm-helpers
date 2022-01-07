@@ -13,7 +13,7 @@ export ProdName="epm-helpers"
 export ProdAlias=""
 # One word [-_.a-zA-Z0-9]
 
-export ProdVer="1.2"
+export ProdVer="1.3"
 # [0-9]*.[0-9]*{.[0-9]*}{.[0-9]*}
 
 export ProdRC=""
@@ -41,10 +41,10 @@ export ProdCopyright="2021"
 export ProdDate=""
 # 20[0-9][0-9]-[01][0-9]-[0123][0-9]
 
-export ProdLicense="LICENSE"
+export ProdLicense="dist/usr/local/share/doc/epm-helpers/LICENSE"
 # Required, usually a path
 
-export ProdReadMe="README.md"
+export ProdReadMe="dist/usr/local/share/doc/epm-helpers/README.md"
 # Required, usually a path
 
 # Third Party (if any) If repackaging a product, put in its version.
@@ -95,8 +95,8 @@ export envHeader=""
 export envFooter=""
 
 export epmFile="ver.epm"
-export epmHeader=""
-export epmFooter="# %include ver.list"
+export epmHeader="%include epm.require"
+export epmFooter="%include epm.list"
 
 export makFile="ver.mak"
 export makHeader=""

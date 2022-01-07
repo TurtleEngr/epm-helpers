@@ -18,7 +18,8 @@ build epm.list : ver.mak doc/ver.sh.default
 	gzip dist/usr/local/man/man1/*
 	cp doc/* dist/usr/local/share/doc/epm-helpers
 	cp README.md dist/usr/local/share/doc/epm-helpers
-	mkepmlist -u root -g root --prefix / dist | patch-epm-list -f ./epm.patch >epm.list
+	find dist -executable -exec chmod a+rx {} \;
+	mkepmlist -u root -g root --prefix / dist | ./patch-epm-list -f ./epm.patch >epm.list
 
 clean :
 	-rm ver.cs ver.env ver.epm ver.h ver.java ver.mak ver.pl ver.xml >/dev/null 2>&1
@@ -29,13 +30,14 @@ dist-clean : clean
 	-cd test; make clean
 	-rm -rf pkg >/dev/null 2>&1
 
-package : epm.list
+package : epm.list ver.epm epm.require epm.patch patch-epm-list
 	-rm -rf pkg >/dev/null 2>&1
-	mkdir pkg >/dev/null 2>&1
+	mkdir pkg
 	epm -v -f native -m linux-noarch --output-dir pkg epm-helpers ver.epm
+	epm -v -f portable -m linux-noarch --output-dir pkg epm-helpers ver.epm
 
 # --------------------
-ver.mak : ver.sh mkver.pl patch-epm-list
+ver.mak ver.epm ver.env : ver.sh mkver.pl patch-epm-list
 	./mkver.pl -d ver.sh -e 'mak env epm' >/dev/null 2>&1
 
 doc/ver.sh.default : mkver.pl
