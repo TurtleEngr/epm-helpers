@@ -1,0 +1,12 @@
+dist/
+pkg/
+*~
+epm.list
+ver.cs
+ver.env
+ver.epm
+ver.h
+ver.java
+ver.mak
+ver.pl
+ver.xml
