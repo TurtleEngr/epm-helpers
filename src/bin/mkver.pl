@@ -443,8 +443,8 @@ if ($MkVer > $cgMkVerBase) {
 }
 
 # ----------
+# Initial default version definition file.
 if (! -f $gpDef) {
-	# Initial default version definition file.
 	open(hDefOut, ">$gpDef");
 	print hDefOut "
 # Input DEF file for: mkver.pl.  All variables must have \"export \"
@@ -456,50 +456,75 @@ if (! -f $gpDef) {
 # still work with newer versions of mkver.pl)
 export MkVer=\"$cgMkVerBase\"
 
-export ProdName=\"PRODNAME\"
-# One word [-_.a-zA-Z0-9]
+export ProdName=\"PROD-NAME\"
+# One word [-a-z0-9]
+# Required
+# %provides ProdName
 
-export ProdAlias=\"PRODALIAS\"
-# One word [-_.a-zA-Z0-9]
+export ProdAlias=\"PROD-ALIAS\"
+# One word [-a-z0-9]
 
 export ProdVer=\"0.1\"
-# [0-9]*.[0-9]*{.[0-9]*}{.[0-9]*}
+# [0-9]*.[0-9]*{.[0-9]*}
+# Requires 2 numbers, 3'rd number is optional
+# %version ProdVer
 
 export ProdRC=\"\"
-# Release Candidate ver
+# Release Candidate ver. Can be one or two numbers. If set:
+#  %release rc.ProdRC
 
 export ProdBuild=\"1\"
 # [0-9.]*
+# Required
+# If RELEASE=1
+#  %release ProdBuild
 
 # Generated ProdBuildTime=YYYY.MM.DD.hh.mm
-# Generated ProdSemVer=ProdVer[-rc.ProdRC][+ProdBuildTime]
-# Generated ProdPkgName=ProdName-ProdVer[-rc.ProdRC]
+# If RELEASE=0 or unset, then use current time: %Y.%m.%d.%H.%M
+#  %release t.ProdBuildTime
 
 export ProdSummary=\"PRODSUMMARY\"
 # All on one line (< 80 char)
+# %product ProdSummary
 
 export ProdDesc=\"PRODDESC\"
 # All on one line
+# %description ProdDesc
 
 export ProdVendor=\"COMPANY\"
+# Required
+# %vendor ProdVendor
 
 export ProdPackager=\"\$USER\"
+# %packager ProdPackager
+# Required
+
 export ProdSupport=\"support\\\@COMPANY.com\"
+# Appended to %vendor
+
 export ProdCopyright=\"\"
+# %copyright ProdCopyright
+# Required
 
 export ProdDate=\"\"
 # 20[0-9][0-9]-[01][0-9]-[0123][0-9]
+# Current date if empty
 
-export ProdLicense=\"LICENSE\"
-# Required, usually a path
+export ProdLicense=\"./LICENSE\"
+# Required
+# %license ProdLicense
 
-export ProdReadMe=\"README\"
-# Required, usually a path
+export ProdReadMe=\"./README\"
+# Required
+# %readme ProdReadMe
 
-# Third Party (if any) If repackaging a product, put in its version.
+# Third Party (if any) If repackaging a product, define these:
 export ProdTPVendor=\"\"
+# Appended to $vendor
 export ProdTPVer=\"\"
+# Appended to $description
 export ProdTPCopyright=\"\"
+# Appended to %copyright
 
 export ProdRelServer=\"rel.DOMAIN.com\"
 export ProdRelRoot=\"/release/package\"
@@ -513,6 +538,8 @@ export ProdRelCategory=\"software/ThirdParty/\$ProdName\"
 # Generated: ProdOSDist
 # Generated: ProdOSVer
 # Generated: ProdOS=$ProdOSDist$ProdOSVer
+# Generated: $ProdOSDist=1
+# Generated: $ProdOSDist$ProdOSVer=1
 #	OSDist	OSVer
 # linux
 # 	deb
@@ -586,7 +613,13 @@ export xmlFooter=\"\"
 $tStr = $gCurDir;
 $tStr =~ s!.*/!!;
 $ProdName = &fDefault("ProdName", "$ProdName", "$tStr");
+$ProdName =~ tr/[A-Z]/[a-z]/;
+$ProdName =~ tr/-[a-z]//cd;
+
 $ProdAlias = &fDefault("ProdAlias", "$ProdAlias", "$ProdName");
+$ProdAlias =~ tr/[A-Z]/[a-z]/;
+$ProdAlias =~ tr/-[a-z]//cd;
+
 $ProdSummary = &fDefault("ProdSummary", "$ProdSummary", "$ProdName");
 $ProdDesc = &fDefault("ProdDesc", "$ProdDesc", "$ProdName");
 $ProdVer = &fDefault("ProdVer", "$ProdVer", "1.0");
@@ -606,14 +639,6 @@ $RELEASE = &fDefault("RELEASE", "$RELEASE", "0");
 
 $tVer = $ProdVer;
 $tVer =~ s/\.[.0-9]//;
-
-if ($ProdRC ne "") {
-	$ProdSemVer = $ProdVer . "-rc" . $ProdRC . '+' . $ProdBuildTime;
-	$ProdPkgName = $ProdName . $ProdVer . "-rc" . $ProdRC;
-} else {
-	$ProdSemVer = $ProdVer . '+' . $ProdBuildTime;
-	$ProdPkgName = $ProdName . '-' . $ProdVer;
-}
 
 $ProdCopyright = &fDefault("ProdCopyright", "$ProdCopyright", "Copyright $gYear. All rights reserved.");
 $ProdRelCategory = &fDefault("ProdRelCategory", "$ProdRelCategory", "software/ThirdParty/$ProdName");
@@ -635,23 +660,25 @@ if ((-d ".svn") or (-d "_svn")) {
 # -------------------
 # Override and set variables, based on RELEASE, and other var.
 
-$ProdDesc .= ($ProdBuild) ? " / Build=$ProdBuild" : "";
-$ProdDesc .= ($ProdSvnVer) ? " / SvnVer=$ProdSvnVer" : "";
 
-if ("$ProdTPVer" ne "") {
-	$ProdDesc = "$ProdDesc / TPVer=$ProdTPVer";
+if ("$ProdSvnVer" ne "") {
+	$ProdDesc .= " / SvnVer=$ProdSvnVer";
+}
+
+if ("$ProdSupport" ne "") {
+	$ProdVendor .= " / $ProdSuport";
 }
 
 if ("$ProdTPVer" ne "") {
-	$ProdTPCopyright = &fDefault("ProdTPCopyright", "$ProdTPCopyright", "Copyright $ProdVendor $gYear. All rights reserved.");
+	$ProdDesc .= " / TPVer=$ProdTPVer";
 }
 
 if ("$ProdTPCopyright" ne "") {
-	$ProdCopyright = $ProdTPCopyright;
+	$ProdCopyright .= " / $ProdTPCopyright";
 }
 
 if ("$ProdTPVendor" ne "") {
-	$ProdVendor = "$ProdTPVendor / $ProdVendor";
+	$ProdVendor .= " / $ProdVendor";
 }
 
 $ProdWinVer = "$ProdVer";
@@ -669,9 +696,6 @@ if (("$RELEASE" eq "1") and ($MkVer le $cgMkVerBase)) {
 
 $ProdTag =~ tr/\-\._ :/\-\-\-\-\-/s;
 $ProdVer =~ tr/\-_ :/\-\-\-\-/s;
-
-$ProdVendor = "$ProdVendor / $ProdPackager";
-
 
 # -------------------
 # Validate
@@ -852,11 +876,17 @@ if ($gpExt =~ / epm /) {
 $epmHeader
 %product $ProdSummary
 %version $ProdVer
-%release $ProdBuild
 %packager $ProdPackager
 %vendor $ProdVendor
 %copyright $ProdCopyright
 %description $ProdDesc
+%if ProdRC
+    %release rc.$ProdRC
+%elseif !RELEASE
+    %release t.$ProdBuildTime
+%else
+    %release $ProdBuild
+%endif
 ";
 	if ("$ProdLicense" ne "") {
 		print hF "%license $ProdLicense\n";
@@ -936,7 +966,6 @@ foreach $i (
 	"ProdRC",
 	"ProdBuild",
 	"ProdBuildTime",
-	"ProdSemVer",
 	"ProdSvnVer",
 	"ProdWinVer",
 	"ProdDate",
@@ -978,7 +1007,6 @@ print plF "$plFooter\n";
 foreach $i (
 	"MkVer",
 	"ProdDesc",
-	"ProdPkgName",
 	"ProdRelServer",
 	"ProdRelRoot",
 	"ProdRelCategory",
@@ -1001,8 +1029,9 @@ foreach $i (
 	print xmlF "<$i>$tValXML</$i>\n";
 }
 
-# Create a variable with the value of ProdOS
-print envF "export ProdOS" . $ProdOS . "=1\n";
+# Create a variables for use in epm.list file
+print envF "export $ProdOS=1\n";
+print envF "export $ProdOSDist=1\n";
 
 print makF "$makFooter\n";
 print envF "$envFooter\n";
