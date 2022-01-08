@@ -480,7 +480,7 @@ export ProdBuild=\"1\"
 #  %release ProdBuild
 
 # Generated ProdBuildTime=YYYY.MM.DD.hh.mm
-# If RELEASE=0 or unset, then use current time: %Y.%m.%d.%H.%M
+# If RELEASE=0, or empty, or unset, then use current time (UTC): %Y.%m.%d.%H.%M
 #  %release t.ProdBuildTime
 
 export ProdSummary=\"PRODSUMMARY\"
@@ -503,12 +503,12 @@ export ProdSupport=\"support\\\@COMPANY.com\"
 # Appended to %vendor
 
 export ProdCopyright=\"\"
+# Current year if not defined
 # %copyright ProdCopyright
-# Required
 
 export ProdDate=\"\"
 # 20[0-9][0-9]-[01][0-9]-[0123][0-9]
-# Current date if empty
+# Current date (UTC) if empty
 
 export ProdLicense=\"./LICENSE\"
 # Required
@@ -572,7 +572,7 @@ export envFooter=\"\"
 
 export epmFile=\"$cgBaseName.epm\"
 export epmHeader=\"\"
-export epmFooter=\"# %include $cgBaseName.list\"
+export epmFooter=\"# %include epm.list\"
 
 export hFile=\"$cgBaseName.h\"
 export hHeader=\"\"
@@ -666,7 +666,7 @@ if ("$ProdSvnVer" ne "") {
 }
 
 if ("$ProdSupport" ne "") {
-	$ProdVendor .= " / $ProdSuport";
+	$ProdVendor .= " / $ProdSupport";
 }
 
 if ("$ProdTPVer" ne "") {
@@ -678,7 +678,7 @@ if ("$ProdTPCopyright" ne "") {
 }
 
 if ("$ProdTPVendor" ne "") {
-	$ProdVendor .= " / $ProdVendor";
+	$ProdVendor .= " / $ProdTPVendor";
 }
 
 $ProdWinVer = "$ProdVer";
@@ -690,6 +690,7 @@ $ProdDevDir = $ProdRelRoot . "/development/" . $ProdRelCategory;
 if ("$RELEASE" eq "1") {
 	$ProdPackager = "RE";
 }
+# ????
 if (("$RELEASE" eq "1") and ($MkVer le $cgMkVerBase)) {
 	$ProdRelDir = $ProdRelRoot . "/development/" . $ProdRelCategory;
 }
@@ -880,14 +881,14 @@ $epmHeader
 %vendor $ProdVendor
 %copyright $ProdCopyright
 %description $ProdDesc
-%if ProdRC
-    %release rc.$ProdRC
-%elseif !RELEASE
-    %release t.$ProdBuildTime
-%else
-    %release $ProdBuild
-%endif
 ";
+	if ($ProdRC != 0) {
+		print hF "%release rc.$ProdRC\n";
+	} elsif ($RELEASE == 0) {
+		print hF "%release t.$ProdBuildTime\n";
+	} else {
+		print hF "%release $ProdBuild $RELEASE\n";
+	}
 	if ("$ProdLicense" ne "") {
 		print hF "%license $ProdLicense\n";
 	}

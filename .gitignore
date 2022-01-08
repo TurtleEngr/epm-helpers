@@ -1,5 +1,6 @@
 dist/
 pkg/
+tmp/
 *~
 epm.list
 ver.cs

@@ -41,7 +41,7 @@ first : ver.mak
 	which epminstall
 	which perl
 
-build epm.list : ver.mak src/doc/ver.sh.default
+build epm.list : clean ver.mak ver.epm src/doc/ver.sh.default
 	-rm -rf dist >/dev/null 2>&1
 	mkdir -p dist/usr/local/bin
 	mkdir -p dist/usr/local/man/man1
@@ -54,7 +54,7 @@ build epm.list : ver.mak src/doc/ver.sh.default
 	cp src/doc/* dist/usr/local/share/doc/epm-helpers
 	cp README.md dist/usr/local/share/doc/epm-helpers
 	find dist -executable -exec chmod a+rx {} \;
-	mkepmlist -u root -g root --prefix / dist | ./patch-epm-list -f ./epm.patch >epm.list
+	mkepmlist -u root -g root --prefix / dist | src/bin/patch-epm-list -f ./epm.patch >epm.list
 
 test :
 	cd test; make
@@ -68,29 +68,29 @@ dist-clean : clean
 	-cd test; make clean
 	-rm -rf pkg >/dev/null 2>&1
 
-test-package :
+test-package : epm.list ver.epm epm.require
 	-rm -rf pkg >/dev/null 2>&1
 	mkdir pkg
-	epm -v -f native -m linux-noarch --output-dir pkg epm-helpers ver.epm
-	epm -v -f portable -m linux-noarch --output-dir pkg epm-helpers ver.epm
+	export RELEASE=0; . ./ver.env; epm -v -f native -m linux-noarch --output-dir pkg epm-helpers ver.epm
+	export RELEASE=0; . ./ver.env; epm -v -f portable -m linux-noarch --output-dir pkg epm-helpers ver.epm
 
 test-release :
 
 clean-test-release :
 
-package : epm.list ver.epm epm.require epm.patch patch-epm-list
+package : epm.list ver.epm epm.require
 	-rm -rf pkg >/dev/null 2>&1
 	mkdir pkg
-	epm -v -f native -m linux-noarch --output-dir pkg epm-helpers ver.epm
-	epm -v -f portable -m linux-noarch --output-dir pkg epm-helpers ver.epm
+	export RELEASE=1; . ./ver.env; epm -v -f native -m linux-noarch --output-dir pkg epm-helpers ver.epm
+	export RELEASE=1; . ./ver.env; epm -v -f portable -m linux-noarch --output-dir pkg epm-helpers ver.epm
 
 release :
 
 # --------------------
 ver.mak ver.epm ver.env : ver.sh src/bin/mkver.pl src/bin/patch-epm-list
-	src/bin/mkver.pl -d ver.sh -e 'mak env epm' >/dev/null 2>&1
+	src/bin/mkver.pl -d ver.sh -e 'mak env epm'
 
 src/doc/ver.sh.default : src/bin/mkver.pl
 	-mkdir tmp
 	cd tmp; ../src/bin/mkver.pl -e env >/dev/null 2>&1
-	mv -f tmp/ver.sh ../src/doc/ver.sh.default
+	cp -f tmp/ver.sh src/doc/ver.sh.default
