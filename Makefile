@@ -41,7 +41,7 @@ first : ver.mak
 	which epminstall
 	which perl
 
-build epm.list : ver.mak doc/ver.sh.default
+build epm.list : ver.mak src/doc/ver.sh.default
 	-rm -rf dist >/dev/null 2>&1
 	mkdir -p dist/usr/local/bin
 	mkdir -p dist/usr/local/man/man1
@@ -66,7 +66,6 @@ clean :
 
 dist-clean : clean
 	-cd test; make clean
-	-rm ver.mak >/dev/null 2>&1
 	-rm -rf pkg >/dev/null 2>&1
 
 test-package :
@@ -88,10 +87,10 @@ package : epm.list ver.epm epm.require epm.patch patch-epm-list
 release :
 
 # --------------------
-ver.mak ver.epm ver.env : ver.sh mkver.pl patch-epm-list
-	./mkver.pl -d ver.sh -e 'mak env epm' >/dev/null 2>&1
+ver.mak ver.epm ver.env : ver.sh src/bin/mkver.pl src/bin/patch-epm-list
+	src/bin/mkver.pl -d ver.sh -e 'mak env epm' >/dev/null 2>&1
 
-doc/ver.sh.default : mkver.pl
+src/doc/ver.sh.default : src/bin/mkver.pl
 	-mkdir tmp
-	cd tmp; ../mkver.pl -e env >/dev/null 2>&1
-	mv -f tmp/ver.sh doc/ver.sh.default
+	cd tmp; ../src/bin/mkver.pl -e env >/dev/null 2>&1
+	mv -f tmp/ver.sh ../src/doc/ver.sh.default
