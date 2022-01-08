@@ -13,14 +13,18 @@ export ProdName="epm-helpers"
 export ProdAlias=""
 # One word [-_.a-zA-Z0-9]
 
-export ProdVer="1.3"
+export ProdVer="1.4"
 # [0-9]*.[0-9]*{.[0-9]*}{.[0-9]*}
+# 3 levels only
 
 export ProdRC=""
-# Release Candidate ver
+# Release Candidate ver, to put after ProdVer
+# "-rc.ProdRC"
 
 export ProdBuild="1"
 # [0-9.]*
+# Inc. this between each production build
+# Put at end of ProdSemVer: "+ProdBuild"
 
 # Generated ProdBuildTime=YYYY.MM.DD.hh.mm
 # Generated ProdSemVer=ProdVer[-rc.ProdRC][+ProdBuildTime]
@@ -34,11 +38,12 @@ export ProdDesc="EPM will build packages across many non-windows platforms. Ther
 
 export ProdVendor="TurtleEngr"
 
-export ProdPackager="TurtleEngr"
+export ProdPackager="RE"
 export ProdSupport="turtle.engr@gmail.com"
 export ProdCopyright="2021"
 
 export ProdDate=""
+# Curent date, if empty
 # 20[0-9][0-9]-[01][0-9]-[0123][0-9]
 
 export ProdLicense="dist/usr/local/share/doc/epm-helpers/LICENSE"
