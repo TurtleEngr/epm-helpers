@@ -9,7 +9,7 @@
 # Run unit tests
 # make test
 
-# Use this to start with a fresh build
+# Use this to start with a fresh build (build always runs this)
 # make clean
 
 # Use this to clean up all unversioned files (after making and releasing
@@ -33,19 +33,34 @@
 # Push the packages to a "release" server and/or apt repository
 # make release
 
+# --------------------
 include ver.mak
 
 # --------------------
-first : ver.mak
-	which epm
-	which epminstall
-	which perl
-	which pod2usage
-	which pod2text
-	which pod2man
-	which pod2markdown
+# Config
 
-build epm.list : clean ver.mak ver.epm src/doc/ver.sh.default
+mHtmlOpt = --cachedir=/tmp --index --backlink
+
+mDoc = \
+	src/doc/mkver.pl.html \
+	src/doc/patch-epm-list.html \
+	src/doc/mkver.pl.md \
+	src/doc/patch-epm-list.md
+
+# --------------------
+# Main targets
+
+first : ver.mak ver.epm
+	@which epm
+	@which epminstall
+	@which perl
+	@which pod2usage
+	@which pod2text
+	@which pod2man
+	@which pod2html
+	@which pod2markdown
+
+build epm.list : clean doc ver.mak ver.epm
 	-rm -rf dist >/dev/null 2>&1
 	-mkdir -p doc
 	mkdir -p dist/usr/local/bin
@@ -53,10 +68,8 @@ build epm.list : clean ver.mak ver.epm src/doc/ver.sh.default
 	mkdir -p dist/usr/local/share/doc/epm-helpers
 	cd src/bin; chmod a+rx *
 	cp src/bin/* dist/usr/local/bin
-	pod2man src/bin/mkver.pl dist/usr/local/man/man1/mkver.pl.1
-	pod2man src/bin/patch-epm-list dist/usr/local/man/man1/patch-epm-list.1
-	pod2markdown src/bin/mkver.pl doc/mkver.pl.md
-	pod2markdown src/bin/patch-epm-list doc/patch-epm-list.md
+	pod2man src/bin/mkver.pl >dist/usr/local/man/man1/mkver.pl.1
+	pod2man src/bin/patch-epm-list >dist/usr/local/man/man1/patch-epm-list.1
 	gzip dist/usr/local/man/man1/*
 	cp src/doc/* dist/usr/local/share/doc/epm-helpers
 	cp README.md dist/usr/local/share/doc/epm-helpers
@@ -94,10 +107,26 @@ package : epm.list ver.epm epm.require
 release :
 
 # --------------------
+# Work Targets
+
 ver.mak ver.epm ver.env : ver.sh src/bin/mkver.pl src/bin/patch-epm-list
 	src/bin/mkver.pl -d ver.sh -e 'mak env epm'
+
+doc : $(mDoc) src/doc/ver.sh.default
 
 src/doc/ver.sh.default : src/bin/mkver.pl
 	-mkdir tmp
 	cd tmp; ../src/bin/mkver.pl -e env >/dev/null 2>&1
 	cp -f tmp/ver.sh src/doc/ver.sh.default
+
+src/doc/mkver.pl.html : src/bin/mkver.pl
+	pod2html --title="$(notdir $?)" $(mHtmlOpt) $? >$@
+
+src/doc/patch-epm-list.html : src/bin/patch-epm-list
+	pod2html --title="$(notdir $?)" $(mHtmlOpt) $? >$@
+
+src/doc/mkver.pl.md : src/bin/mkver.pl
+	pod2markdown $? >$?
+
+src/doc/patch-epm-list.md : src/bin/patch-epm-list
+	pod2markdown $? >$?
