@@ -35,11 +35,11 @@ export ProdBuild="1"
 # If RELEASE=0 or unset, then use current time (UTC): %Y.%m.%d.%H.%M
 #  %release t.ProdBuildTime
 
-export ProdSummary="epm-helpers are programs that help with package building with the EPM tool"
+export ProdSummary="epm-helpers are programs work with the EPM tool."
 # All on one line (< 80 char)
 # %product ProdSummary
 
-export ProdDesc="EPM will build packages across many non-windows platforms. There is a lot of meta-data about products that needs to be kept consistent in all the files in the product. The a ver.sh file will define a single place for all meta-data components. mkver.sh will generate the different types of include files that may be used across different languges in your product."
+export ProdDesc="EPM will build packages across many non-windows platforms. There are a lot of meta-data about products that needs to be kept consistent acrross all the files in the product. The ver.sh file will define a single place for all meta-data variables. mkver.sh will generate the different types of include files that may be used across the different languges. Run 'mkver.sh -h" for details."
 # All on one line
 
 export ProdVendor="TurtleEngr"
