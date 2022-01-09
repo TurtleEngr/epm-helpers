@@ -40,9 +40,14 @@ first : ver.mak
 	which epm
 	which epminstall
 	which perl
+	which pod2usage
+	which pod2text
+	which pod2man
+	which pod2markdown
 
 build epm.list : clean ver.mak ver.epm src/doc/ver.sh.default
 	-rm -rf dist >/dev/null 2>&1
+	-mkdir -p doc
 	mkdir -p dist/usr/local/bin
 	mkdir -p dist/usr/local/man/man1
 	mkdir -p dist/usr/local/share/doc/epm-helpers
@@ -50,6 +55,8 @@ build epm.list : clean ver.mak ver.epm src/doc/ver.sh.default
 	cp src/bin/* dist/usr/local/bin
 	pod2man src/bin/mkver.pl dist/usr/local/man/man1/mkver.pl.1
 	pod2man src/bin/patch-epm-list dist/usr/local/man/man1/patch-epm-list.1
+	pod2markdown src/bin/mkver.pl doc/mkver.pl.md
+	pod2markdown src/bin/patch-epm-list doc/patch-epm-list.md
 	gzip dist/usr/local/man/man1/*
 	cp src/doc/* dist/usr/local/share/doc/epm-helpers
 	cp README.md dist/usr/local/share/doc/epm-helpers

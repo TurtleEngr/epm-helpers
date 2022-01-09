@@ -84,7 +84,7 @@ Output debug messages.
 
 =back
 
-=head1 RETURN VALUE
+=for comment =head1 RETURN VALUE
 
 =head1 ERRORS
 
@@ -108,7 +108,7 @@ and create the directory
 Either fix the variable definition, create the file, or clear the
 definition.
 
-=head1 EXAMPLES
+=for comment =head1 EXAMPLES
 
 =head1 ENVIRONMENT
 
@@ -126,15 +126,15 @@ Output:
 
 patch-emp-list(1), epm(1), epminstall(1), mkepmlist(1), epm.list(5)
 
-=head1 NOTES
+=for comment =head1 NOTES
 
-=head1 CAVEATS
+=for comment =head1 CAVEATS
 
-=head1 DIAGNOSTICS
+=for comment =head1 DIAGNOSTICS
 
-=head1 BUGS
+=for comment =head1 BUGS
 
-=head1 RESTRICTIONS
+=for comment =head1 RESTRICTIONS
 
 =head1 AUTHOR
 
