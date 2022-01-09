@@ -86,6 +86,7 @@ clean :
 
 dist-clean : clean
 	-cd test; make clean
+	-rm ver.mak
 	-rm -rf pkg >/dev/null 2>&1
 
 test-package : epm.list ver.epm epm.require
@@ -97,14 +98,19 @@ test-package : epm.list ver.epm epm.require
 test-release :
 
 clean-test-release :
+	# Remove all epm-helpers packages from repo
 
 package : epm.list ver.epm epm.require
+	# Set ProdRC for Release Candidate packages
 	-rm -rf pkg >/dev/null 2>&1
 	mkdir pkg
 	export RELEASE=1; . ./ver.env; epm -v -f native -m linux-noarch --output-dir pkg epm-helpers ver.epm
 	export RELEASE=1; . ./ver.env; epm -v -f portable -m linux-noarch --output-dir pkg epm-helpers ver.epm
 
 release :
+
+clean-rc-release
+	# Remove all epm-helpers Release Candidates from repo
 
 # --------------------
 # Work Targets
