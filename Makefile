@@ -109,7 +109,7 @@ package : epm.list ver.epm epm.require
 
 release :
 
-clean-rc-release
+clean-rc-release :
 	# Remove all epm-helpers Release Candidates from repo
 
 # --------------------
