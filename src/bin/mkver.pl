@@ -88,25 +88,29 @@ Output debug messages.
 
 =head1 ERRORS
 
-* If "ERROR" appears in an output file or in the default input file,
+=over 4
+
+=item If "ERROR" appears in an output file or in the default input file,
 this is a required variable that has to be manually defined.
 
-* Error: Syntax problem with: VARIABLE
+=item Error: Syntax problem with: VARIABLE
 
 The named variable has a syntax error.
 
-* Error: Could not find directory: DIR
+=item Error: Could not find directory: DIR
 
 The DIR specified for an output file, can not be
 found.  Fix the (EXT)File variable's definition,
 and create the directory
 
-* Error: mkcver or the definition file needs to be updated.
+=item Error: mkcver or the definition file needs to be updated.
 
-* Warning: Could not find file: VARIABLE (FILE)"
+=item Warning: Could not find file: VARIABLE (FILE)"
 
 Either fix the variable definition, create the file, or clear the
 definition.
+
+=back
 
 =for comment =head1 EXAMPLES
 
