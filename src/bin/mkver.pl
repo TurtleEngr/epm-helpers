@@ -1038,7 +1038,7 @@ foreach $i (
 ) {
         $tVal=$$i;
         print envF "export $i=\"$tVal\"\n";
-        print makF "$i = $tVal\n";
+        print makF "$i=$tVal\n";
 
         $tValXML = $tVal;
         $tValXML =~ s/\&/\&amp;/;
