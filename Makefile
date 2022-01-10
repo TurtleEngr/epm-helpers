@@ -64,14 +64,14 @@ build epm.list : clean doc ver.mak ver.epm
 	-rm -rf dist >/dev/null 2>&1
 	mkdir -p dist/usr/local/bin
 	mkdir -p dist/usr/local/man/man1
-	mkdir -p dist/usr/local/share/doc/epm-helper
+	mkdir -p dist/usr/local/share/doc/$(ProdName)
 	cd src/bin; chmod a+rx *
 	cp src/bin/* dist/usr/local/bin
 	pod2man src/bin/mkver.pl >dist/usr/local/man/man1/mkver.pl.1
 	pod2man src/bin/patch-epm-list >dist/usr/local/man/man1/patch-epm-list.1
 	gzip dist/usr/local/man/man1/*
-	cp src/doc/* dist/usr/local/share/doc/epm-helper
-	cp README.md dist/usr/local/share/doc/epm-helper
+	cp src/doc/* dist/usr/local/share/doc/$(ProdName)
+	cp README.md dist/usr/local/share/doc/$(ProdName)
 	find dist -executable -exec chmod a+rx {} \;
 	mkepmlist -u root -g root --prefix / dist | src/bin/patch-epm-list -f ./epm.patch >epm.list
 
@@ -92,8 +92,8 @@ test-package : epm.list epm.require
 	-rm -rf pkg ver.epm >/dev/null 2>&1
 	mkdir pkg
 	export RELEASE=0; src/bin/mkver.pl -d ver.sh -e epm
-	epm -v -f native -m linux-noarch --output-dir pkg epm-helper ver.epm
-	epm -v -f portable -m linux-noarch --output-dir pkg epm-helper ver.epm
+	epm -v -f native -m linux-noarch --output-dir pkg $(ProdName) ver.epm
+	epm -v -f portable -m linux-noarch --output-dir pkg $(ProdName) ver.epm
 
 test-release : TBD
 
@@ -105,8 +105,8 @@ package : epm.list epm.require
 	-rm -rf pkg ver.epm >/dev/null 2>&1
 	mkdir pkg
 	export RELEASE=1; src/bin/mkver.pl -d ver.sh -e epm
-	epm -v -f native -m linux-noarch --output-dir pkg epm-helper ver.epm
-	epm -v -f portable -m linux-noarch --output-dir pkg epm-helper ver.epm
+	epm -v -f native -m linux-noarch --output-dir pkg $(ProdName) ver.epm
+	epm -v -f portable -m linux-noarch --output-dir pkg $(ProdName) ver.epm
 
 release : ver.env ver.mak
 	. ./ver.env; echo "ssh $(ProdRelServer) mkdir -p $(ProdRelRoot)/released/software/ThirdParty/epm"
@@ -116,9 +116,9 @@ release : ver.env ver.mak
 
 tag : ver.env ver.mak
 	-git commit -am Updated
-	. ./ver.env; git tag -f -a -m "Released to: $(ProdRelServer):$(ProdRelDir)" $(ProdTag)-$(ProdBuild)
+	. ./ver.env; git tag -f -a -m "Released to: $(ProdRelServer):$(ProdRelDir)" $(ProdTag)
 	date -u +'%F %R UTC' >>VERSION
-	. ./ver.env; echo "$(ProdTag)-$(ProdBuild)" >>VERSION
+	. ./ver.env; echo "$(ProdTag)" >>VERSION
 	. ./ver.env; echo "Released: $$(ls pkg)" >>VERSION
 	. ./ver.env; echo "to: $(ProdRelServer):$(ProdRelRoot)/released/software/ThirdParty/epm" >>VERSION
 	#git commit -am Updated

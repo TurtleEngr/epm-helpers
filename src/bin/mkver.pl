@@ -704,7 +704,7 @@ if ("$ProdTPVendor" ne "") {
 $ProdWinVer = "$ProdVer";
 
 $ProdBuild =~ tr/0123456789./0123456789./cd;
-$ProdTag = &fDefault("ProdTag", "$ProdTag", "tag-$ProdVer");
+$ProdTag = &fDefault("ProdTag", "$ProdTag", "tag-$ProdVer-$ProdBuild");
 $ProdRelDir = $ProdRelRoot . "/released/" . $ProdRelCategory;
 $ProdDevDir = $ProdRelRoot . "/development/" . $ProdRelCategory;
 if ($RELEASE != 0) {
