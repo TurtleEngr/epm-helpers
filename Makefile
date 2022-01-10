@@ -51,6 +51,8 @@ mDoc = \
 # Main targets
 
 first : ver.mak ver.epm
+	touch ver.sh
+	make ver.mak
 	@which epm
 	@which epminstall
 	@which perl
