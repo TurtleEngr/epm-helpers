@@ -21,19 +21,21 @@ export ProdVer="0.1"
 # Requires 2 numbers, 3'rd number is optional
 # %version ProdVer
 
-export ProdRC=""
-# Release Candidate ver. Can be one or two numbers. If set:
-#  %release rc.ProdRC
+export ProdRC=''
+# Release Candidate ver. Can be one or two numbers.
+# If set and RELEASE=1
+  # %release rc.ProdRC
 
-export ProdBuild="1"
+export ProdBuild='1'
 # [0-9.]*
 # Required
-# If RELEASE=1
-#  %release ProdBuild
+# If RELEASE=1, and ProdRC=''
+  # %release test.ProdBuild
 
 # Generated ProdBuildTime=YYYY.MM.DD.hh.mm
-# If RELEASE=0, or empty, or unset, then use current time (UTC): %Y.%m.%d.%H.%M
-#  %release t.ProdBuildTime
+  # If RELEASE=0, or empty, or unset, then use
+  # current time (UTC): %Y.%m.%d.%H.%M
+    # %release ProdBuildTime
 
 export ProdSummary="PRODSUMMARY"
 # All on one line (< 80 char)
@@ -48,8 +50,8 @@ export ProdVendor="COMPANY"
 # %vendor ProdVendor
 
 export ProdPackager="$USER"
-# %packager ProdPackager
 # Required
+# %packager ProdPackager
 
 export ProdSupport="support\@COMPANY.com"
 # Appended to %vendor
@@ -92,22 +94,22 @@ export ProdRelCategory="software/ThirdParty/$ProdName"
 # Generated: ProdOS=mx19.4
 # Generated: mx=1
 # Generated: mx19.4=1
-#	OSDist	OSVer
+#       OSDist  OSVer
 # linux
-# 	deb
-#	ubuntu	16,18
-#	mx	19,20
-# 	rhes
-# 	cent
-# 	fc
+#       deb
+#       ubuntu  16,18
+#       mx      19,20
+#       rhes
+#       cent
+#       fc
 # cygwin
-#	cygwin
+#       cygwin
 # mswin32
-#	win	xp
+#       win     xp
 # solaris
-#	sun
+#       sun
 # darwin
-#	mac
+#       mac
 
 # Generated: ProdArch
 # i386

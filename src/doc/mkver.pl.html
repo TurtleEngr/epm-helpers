@@ -17,6 +17,7 @@
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#OPTIONS">OPTIONS</a></li>
   <li><a href="#ERRORS">ERRORS</a></li>
+  <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#ENVIRONMENT">ENVIRONMENT</a></li>
   <li><a href="#FILES">FILES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
@@ -128,13 +129,30 @@
 </dd>
 </dl>
 
+<a href="#_podtop_"><h1 id="EXAMPLES">EXAMPLES</h1></a>
+
+<p>How the variables RELEASE and ProdRC affect %packager and %release values in the &quot;epm&quot; file.</p>
+
+<pre><code>    export RELEASE=0; mkver.pl -d ver.sh -e epm
+
+        %packager [setting in ver.sh]
+        %release test.$ProdBuildTime
+
+    export RELEASE=1; mkver.pl -d ver.sh -e epm
+
+        %packager RE
+        if $ProdRC is not empty,
+            %release rc.$ProdRC
+        else
+            %release $ProdBuild</code></pre>
+
 <a href="#_podtop_"><h1 id="ENVIRONMENT">ENVIRONMENT</h1></a>
 
-<p>$HOME, $RELEASE</p>
+<p>$RELEASE, $USER</p>
 
 <a href="#_podtop_"><h1 id="FILES">FILES</h1></a>
 
-<p>Input: ver.sh or DEF.sh</p>
+<p>Input: ver.sh or -d DEF.sh</p>
 
 <p>Output: ver.EXT files</p>
 
