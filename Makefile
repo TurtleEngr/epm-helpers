@@ -117,6 +117,7 @@ release : ver.env ver.mak
 tag : ver.env ver.mak
 	-git commit -am Updated
 	. ./ver.env; git tag -f -a -m "Released to: $(ProdRelServer):$(ProdRelDir)" $(ProdTag)
+	echo "# --------------------" >>VERSION
 	date -u +'%F %R UTC' >>VERSION
 	. ./ver.env; echo "$(ProdTag)" >>VERSION
 	. ./ver.env; echo "Released: $$(ls pkg)" >>VERSION
