@@ -111,7 +111,7 @@ package : epm.list epm.require
 release : ver.env ver.mak
 	. ./ver.env; echo "ssh $(ProdRelServer) mkdir -p $(ProdRelRoot)/released/software/ThirdParty/epm"
 	-. ./ver.env; ssh $(ProdRelServer) mkdir -p $(ProdRelRoot)/released/software/ThirdParty/epm
-	. ./ver.env; ssh $(ProdRelServer test -d $(ProdRelRoot)/released/software/ThirdParty/epm
+	. ./ver.env; ssh $(ProdRelServer) test -d $(ProdRelRoot)/released/software/ThirdParty/epm
 	. ./ver.env; rsync -zP pkg/$(ProdName)-* $(ProdRelServer):$(ProdRelRoot)/released/software/ThirdParty/epm
 
 tag : ver.env ver.mak
