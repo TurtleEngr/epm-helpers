@@ -16,7 +16,7 @@ export ProdName="epm-helper"
 export ProdAlias=""
 # One word [-a-z0-9]
 
-export ProdVer="1.4"
+export ProdVer="1.4.1"
 # [0-9]*.[0-9]*{.[0-9]*}
 # Requires 2 numbers, 3'rd number is optional
 # %version ProdVer
@@ -25,7 +25,7 @@ export ProdRC=""
 # Release Candidate ver. Can be one or two numbers. If set:
 #  %release rc.ProdRC
 
-export ProdBuild="2"
+export ProdBuild="1"
 # [0-9.]*
 # Required
 # If RELEASE=1
