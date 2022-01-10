@@ -1004,10 +1004,10 @@ foreach $i (
         print hF "#define $i \"$tVal\"\n";
         print javaF "public static final String $i = \"$tVal\";\n";
         print csF "\"$i\", \"$tVal\",\n";
-        print makF "$i = $tVal\n";
+        print makF "$i=$tVal\n";
         print plF "\$$i = \"$tVal\";\n";
 
-        $tValXML = $tVal;
+        $tValXML=$tVal;
         $tValXML =~ s/\&/\&amp;/;
         $tValXML =~ s/</\&lt;/;
         $tValXML =~ s/>/\&gt;/;
@@ -1040,7 +1040,7 @@ foreach $i (
         print envF "export $i=\"$tVal\"\n";
         print makF "$i=$tVal\n";
 
-        $tValXML = $tVal;
+        $tValXML=$tVal;
         $tValXML =~ s/\&/\&amp;/;
         $tValXML =~ s/</\&lt;/;
         $tValXML =~ s/>/\&gt;/;
