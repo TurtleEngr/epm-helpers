@@ -89,23 +89,25 @@ dist-clean : clean
 	-rm ver.mak
 	-rm -rf pkg >/dev/null 2>&1
 
-test-package : epm.list ver.epm epm.require
-	-rm -rf pkg >/dev/null 2>&1
+test-package : epm.list epm.require
+	-rm -rf pkg ver.epm >/dev/null 2>&1
 	mkdir pkg
-	export RELEASE=0; . ./ver.env; epm -v -f native -m linux-noarch --output-dir pkg epm-helper ver.epm
-	export RELEASE=0; . ./ver.env; epm -v -f portable -m linux-noarch --output-dir pkg epm-helper ver.epm
+	export RELEASE=0; src/bin/mkver.pl -d ver.sh -e epm
+	epm -v -f native -m linux-noarch --output-dir pkg epm-helper ver.epm
+	epm -v -f portable -m linux-noarch --output-dir pkg epm-helper ver.epm
 
 test-release :
 
 clean-test-release :
 	# Remove all epm-helper packages from repo
 
-package : epm.list ver.epm epm.require
+package : epm.list epm.require
 	# Set ProdRC for Release Candidate packages
-	-rm -rf pkg >/dev/null 2>&1
+	-rm -rf pkg ver.epm >/dev/null 2>&1
 	mkdir pkg
-	export RELEASE=1; . ./ver.env; epm -v -f native -m linux-noarch --output-dir pkg epm-helper ver.epm
-#	export RELEASE=1; . ./ver.env; epm -v -f portable -m linux-noarch --output-dir pkg epm-helper ver.epm
+	export RELEASE=1; src/bin/mkver.pl -d ver.sh -e epm
+	epm -v -f native -m linux-noarch --output-dir pkg epm-helper ver.epm
+	epm -v -f portable -m linux-noarch --output-dir pkg epm-helper ver.epm
 
 release :
 
