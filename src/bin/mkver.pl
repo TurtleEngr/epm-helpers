@@ -13,11 +13,11 @@ myver.pl
 
 =head1 SYNOPSIS
 
-	mkver [-h] [-d DEF] [-e 'EXT EXT ...']
+	mkver.pl [-h] [-d DEF] [-e 'EXT EXT ...']
 
 =head1 DESCRIPTION
 
-mkver is used to create standard include files, to define
+mkver.pl is used to create standard include files, to define
 release variables, which are used to categorize and version a
 module or tool.  Its main purpose is to normalized all of
 names and categorizations that are related to a product, and
@@ -46,7 +46,7 @@ header and footer text that should be output for each EXT:
 (EXT)Header, (EXT)Footer.
 
 The simplest way to see the default definitions and variable
-transformations is to run mkver, and specify a DEF file
+transformations is to run mkver.pl, and specify a DEF file
 that doesn't exist.  You can then look at the DEF file that
 was created, and at the generated files.
 
@@ -54,28 +54,27 @@ was created, and at the generated files.
 
 =over 4
 
-=item B<-h elp>
+=item B<-h|-help>
 
 This help
 
-=item B<-d ef DEF>
+=item B<-d|-def DEF>
 
-Path and name of the master version definition file.
-The basename part of the file name will be used to for
-the basename of the version include files.
+Path and name of the master version definition file (DEF).  The
+basename part of the file name will be used for the basename of the
+version include files.
 
  Default: ./ver.sh
  Default basename: ver
 
-=item B<-e xtension EXT>
+=item B<-e|-extension EXT>
 
-A space separated list of extentions, that will be
-generated.  If no -e option is used, then all files
-will be generated.
+A space separated list of extentions, that will be generated.  If no
+-e option is used, then all files will be generated.
 
- Default: -e 'env epm'
+ Default: -e 'cs env epm h java mak pl xml'
 
-=item B<-v erbose>
+=item B<-v|-verbose>
 
 Output warnings and notices.  Errors will always be output.
 
@@ -85,36 +84,39 @@ Output debug messages.
 
 =back
 
-=head1 RETURN VALUE
+=for comment =head1 RETURN VALUE
 
 =head1 ERRORS
 
-* If "ERROR" appears in an output file or in the default input file,
+=over 4
+
+=item If "ERROR" appears in an output file or in the default input file,
 this is a required variable that has to be manually defined.
 
-
-* Error: Syntax problem with: VARIABLE
+=item Error: Syntax problem with: VARIABLE
 
 The named variable has a syntax error.
 
-* Error: Could not find directory: DIR
+=item Error: Could not find directory: DIR
 
 The DIR specified for an output file, can not be
 found.  Fix the (EXT)File variable's definition,
 and create the directory
 
-* Error: mkcver or the definition file needs to be updated.
+=item Error: mkcver or the definition file needs to be updated.
 
-* Warning: Could not find file: VARIABLE (FILE)"
+=item Warning: Could not find file: VARIABLE (FILE)"
 
 Either fix the variable definition, create the file, or clear the
 definition.
 
-=head1 EXAMPLES
+=back
+
+=for comment =head1 EXAMPLES
 
 =head1 ENVIRONMENT
 
-$HOME, $RELEASED
+$HOME, $RELEASE
 
 =head1 FILES
 
@@ -128,23 +130,23 @@ Output:
 
 patch-emp-list(1), epm(1), epminstall(1), mkepmlist(1), epm.list(5)
 
-=head1 NOTES
+=for comment =head1 NOTES
 
-=head1 CAVEATS
+=for comment =head1 CAVEATS
 
-=head1 DIAGNOSTICS
+=for comment =head1 DIAGNOSTICS
 
-=head1 BUGS
+=for comment =head1 BUGS
 
-=head1 RESTRICTIONS
+=for comment =head1 RESTRICTIONS
 
 =head1 AUTHOR
 
-Bruce Rafnel
+TurtleEngr
 
 =head1 HISTORY
 
-$Revision: 1.1 $
+MkVer=2.2
 
 =cut
 
@@ -276,7 +278,7 @@ if ($gDay < 10) {
 
 
 # Set the base version
-$cgMkVerBase = "2.1";
+$cgMkVerBase = "2.2";
 
 # Set General OS type
 $tOSGen = $^O;
@@ -288,7 +290,7 @@ $tOSGen =~ tr/[A-Z]/[a-z]/;
 # darwin
 
 # Set OS Distribution and Version
-if ($tOSGen eq "linux") {
+if (($tOSGen eq "linux") and (-f "/etc/issue.net")) {
 	$tDist = readpipe("head -n 1 /etc/issue.net");
 	chomp $tDist;
 	@tDist = split(/ +/, $tDist);
@@ -305,24 +307,32 @@ if ($tOSGen eq "linux") {
 	# Ubuntu 14.04.4 LTS
 	# 0      1       2
 	if ($tDist[0] eq "Red" and $tDist[1] eq "Hat" and $tDist[2] eq "Enterprise") {
-		$tOSDist = "rhes";
-		$tOSVer = $tDist[6];
+		$ProdOSDist = "rhes";
+		$ProdOSVer = $tDist[6];
 	} elsif ($tDist[0] eq "Debian") {
-		$tOSDist = "deb";
-		$tOSVer = $tDist[2];
+		$ProdOSDist = "deb";
+		$ProdOSVer = $tDist[2];
 	} elsif ($tDist[0] eq "CentOS") {
-		$tOSDist = "cent";
-		$tOSVer = $tDist[2];
+		$ProdOSDist = "cent";
+		$ProdOSVer = $tDist[2];
 	} elsif ($tDist[0] eq "Fedora") {
-		$tOSDist = "fc";
-		$tOSVer = $tDist[3];
+		$ProdOSDist = "fc";
+		$ProdOSVer = $tDist[3];
 	} elsif ($tDist[0] eq "Ubuntu") {
-		$tOSDist = "ubuntu";
-		$tOSVer = $tDist[1];
+		$ProdOSDist = "ubuntu";
+		$ProdOSVer = $tDist[1];
 	} else {
-		$tOSDist = $tOSGen;
-		$tOSVer = "0";
+		$ProdOSDist = $tOSGen;
+		$ProdOSVer = "0";
 	}
+} elsif (($tOSGen eq "linux") and (-f "/etc/lsb-release")) {
+	$ProdOSDist = readpipe("grep DISTRIB_ID= /etc/lsb-release");
+	chomp $ProdOSDist;
+	$ProdOSDist =~ s/DISTRIB_ID=//;
+	$ProdOSVer = readpipe("grep DISTRIB_RELEASE= /etc/lsb-release");
+	chomp $ProdOSVer;
+	$ProdOSVer =~ s/DISTRIB_RELEASE=//;
+	$ProdOSVer =~ s/ +$//;
 } elsif ($tOSGen eq "solaris") {
 	$tDist = readpipe("head -n 1 /etc/release");
 	chomp $tDist;
@@ -330,27 +340,33 @@ if ($tOSGen eq "linux") {
 	# Solaris 10 1/06 s10x_u1wos_19a X86
 	# 0       1  2    3              4
 	@tDist = split(/ +/, $tDist);
-	$tOSDist = "sun";
-	$tOSVer = $tDist[1];
+	$ProdOSDist = "sun";
+	$ProdOSVer = $tDist[1];
 } elsif ($tOSGen eq "darwin") {
-	$tOSDist = "mac";
-	$tOSVer = readpipe("uname -r");
-	chomp $tOSVer;
+	$ProdOSDist = "mac";
+	$ProdOSVer = readpipe("uname -r");
+	chomp $ProdOSVer;
 } elsif ($tOSGen eq "mswin32") {
-	$tOSDist = "win";
-	$tOSVer = "xp";
+	$ProdOSDist = "win";
+	$ProdOSVer = "xp";
 } else {
-	$tOSDist = $tOSGen;
-	$tOSVer = "0";
+	$ProdOSDist = $tOSGen;
+	$ProdOSVer = "0";
 }
+$ProdOSDist =~ tr/[A-Z]/[a-z]/;
+$tOSVer = $ProdOSVer;
 $tOSVer =~ s/\.[\.\d]+//;
-$ProdOS = $tOSDist . $tOSVer;
+$ProdOS = $ProdOSDist . $tOSVer;
 
 # Set Architecture
-if ($tOSDist eq "deb") {
+if ($ProdOSDist eq "deb") {
 	$tArch = readpipe("uname -m");
 } else {
 	$tArch = readpipe("uname -p");
+}
+chomp $tArch;
+if ($tArch eq "unknown") {
+	$tArch = readpipe("uname -m");
 }
 chomp $tArch;
 
@@ -431,82 +447,115 @@ if ($MkVer > $cgMkVerBase) {
 }
 
 # ----------
+# Initial default version definition file.
 if (! -f $gpDef) {
-	# Initial default version definition file.
 	open(hDefOut, ">$gpDef");
 	print hDefOut "
-# \$Header\$
+# Input DEF file for: mkver.pl.  All variables must have \"export \"
+# at the beginning.  No spaces around the \"=\".  And all values
+# enclosed with double quotes.  Variables may include other variables
+# in their values.
 
-# Input file for: mkver.pl.  All variables must have
-# \"export \" at the beginning.  No spaces around the
-# \"=\".  And all values enclosed with double quotes.
-# Variables may include other variables in their
-# values.
+# Set this to latest version of mkver.pl (earlier DEF files should
+# still work with newer versions of mkver.pl)
+export MkVer=\"$cgMkVerBase\"
 
-export ProdName=\"PRODNAME\"
-# One word [-_.a-zA-Z0-9]
+export ProdName=\"PROD-NAME\"
+# One word [-a-z0-9]
+# Required
+# %provides ProdName
 
-export ProdAlias=\"PRODALIAS\"
-# One word [-_.a-zA-Z0-9]
+export ProdAlias=\"PROD-ALIAS\"
+# One word [-a-z0-9]
 
-export ProdVer=\"1.0\"
-# [0-9]*.[0-9]*{.[0-9]*}{.[0-9]*}
+export ProdVer=\"0.1\"
+# [0-9]*.[0-9]*{.[0-9]*}
+# Requires 2 numbers, 3'rd number is optional
+# %version ProdVer
+
+export ProdRC=\"\"
+# Release Candidate ver. Can be one or two numbers. If set:
+#  %release rc.ProdRC
 
 export ProdBuild=\"1\"
-# [0-9]*
+# [0-9.]*
+# Required
+# If RELEASE=1
+#  %release ProdBuild
+
+# Generated ProdBuildTime=YYYY.MM.DD.hh.mm
+# If RELEASE=0, or empty, or unset, then use current time (UTC): %Y.%m.%d.%H.%M
+#  %release t.ProdBuildTime
 
 export ProdSummary=\"PRODSUMMARY\"
 # All on one line (< 80 char)
+# %product ProdSummary
 
 export ProdDesc=\"PRODDESC\"
 # All on one line
+# %description ProdDesc
 
 export ProdVendor=\"COMPANY\"
+# Required
+# %vendor ProdVendor
 
-export ProdPackager=\"\$LOGNAME\"
+export ProdPackager=\"\$USER\"
+# %packager ProdPackager
+# Required
+
 export ProdSupport=\"support\\\@COMPANY.com\"
+# Appended to %vendor
+
 export ProdCopyright=\"\"
+# Current year if not defined
+# %copyright ProdCopyright
 
 export ProdDate=\"\"
-# 20[012][0-9]-[01][0-9]-[0123][0-9]
+# 20[0-9][0-9]-[01][0-9]-[0123][0-9]
+# Current date (UTC) if empty
 
-export ProdLicense=\"COPYING\"
+export ProdLicense=\"./LICENSE\"
 # Required
+# %license ProdLicense
 
-export ProdReadMe=\"README\"
+export ProdReadMe=\"./README\"
 # Required
+# %readme ProdReadMe
 
-# Third Party (if any)
+# Third Party (if any) If repackaging a product, define these:
 export ProdTPVendor=\"\"
+# Appended to $vendor
 export ProdTPVer=\"\"
+# Appended to $description
 export ProdTPCopyright=\"\"
-
-# Set this to latest version of mkver.pl
-export MkVer=\"$cgMkVerBase\"
+# Appended to %copyright
 
 export ProdRelServer=\"rel.DOMAIN.com\"
 export ProdRelRoot=\"/release/package\"
 export ProdRelCategory=\"software/ThirdParty/\$ProdName\"
-# Generated: ProdRelDir=ProdRelRoot . /released|development/ . ProdRelCategory
-# (if RELEASE=1, then use \"released\", else use \"development\")
-# Generated: ProdDevDir=ProdRelRoot/development/ProdRelCategory
+# Generated: ProdRelDir=$ProdRelRoot/released/$ProdRelCategory
+# Generated: ProdDevDir=$ProdRelRoot/development/$ProdRelCategory
 
-# Generated: ProdTag=ProdVer-ProdBuild
-# (All \".\" converted to \"-\")
+# Generated: ProdTag=tag-ProdVer
+# (All \".\" in ProdVer converted to \"-\")
 
-# Generated: ProdOS (DistVer)
-#	Dist
-#		Ver
+# Generated: ProdOSDist
+# Generated: ProdOSVer
+# Generated: ProdOS=$ProdOSDist$ProdOSVer
+# Generated: $ProdOSDist=1
+# Generated: $ProdOSDist$ProdOSVer=1
+#	OSDist	OSVer
 # linux
 # 	deb
+#	ubuntu	16,18
+#	mx	19,20
 # 	rhes
 # 	cent
 # 	fc
 # cygwin
 #	cygwin
 # mswin32
-#	win
-#		xp
+#	win	xp
 # solaris
 #	sun
 # darwin
@@ -516,10 +565,10 @@ export ProdRelCategory=\"software/ThirdParty/\$ProdName\"
 # i386
 # x86_64
 
-# Output file control variables.
+# Output file control variables. (Unused types can be removed.)
 # The *File vars can include dir. names
-# The *Header and *Footer defaults are more complete
-# than what is shown here.
+# The *Header and *Footer defaults are more complete than what is
+# shown here.
 
 export envFile=\"$cgBaseName.env\"
 export envHeader=\"\"
@@ -527,7 +576,7 @@ export envFooter=\"\"
 
 export epmFile=\"$cgBaseName.epm\"
 export epmHeader=\"\"
-export epmFooter=\"# %include $cgBaseName.list\"
+export epmFooter=\"# %include epm.list\"
 
 export hFile=\"$cgBaseName.h\"
 export hHeader=\"\"
@@ -558,6 +607,7 @@ export xmlHeader=\"\"
 export xmlFooter=\"\"
 ";
 	close(hDefOut);
+	chmod 0755, $gpDef;
 	&fDefEnv($gpDef);
 }
 
@@ -567,17 +617,26 @@ export xmlFooter=\"\"
 $tStr = $gCurDir;
 $tStr =~ s!.*/!!;
 $ProdName = &fDefault("ProdName", "$ProdName", "$tStr");
+$ProdName =~ tr/[A-Z]/[a-z]/;
+$ProdName =~ tr/-[a-z]//cd;
+
 $ProdAlias = &fDefault("ProdAlias", "$ProdAlias", "$ProdName");
+$ProdAlias =~ tr/[A-Z]/[a-z]/;
+$ProdAlias =~ tr/-[a-z]//cd;
+
 $ProdSummary = &fDefault("ProdSummary", "$ProdSummary", "$ProdName");
 $ProdDesc = &fDefault("ProdDesc", "$ProdDesc", "$ProdName");
 $ProdVer = &fDefault("ProdVer", "$ProdVer", "1.0");
+$ProdRC = &fDefault("ProdRC", "$ProdRC", "");
 $ProdBuild = &fDefault("ProdBuild", "$ProdBuild", "1");
+$ProdBuildTime = &fDefault("ProdBuildTime", "$ProdBuildTime", "$gYear.$gMonth.$gDay.$gHour.$gMin");
 $ProdVendor = &fDefault("ProdVendor", "$ProdVendor", "COMPANY.");
-$ProdPackager = &fDefault("ProdPackager", "$ProdPackager", "$LOGNAME");
+$ProdPackager = &fDefault("ProdPackager", "$ProdPackager", "$USER");
 $ProdSupport = &fDefault("ProdSupport", "$ProdSupport", "support\@COMPANY.com");
 $ProdDate = &fDefault("ProdDate", "$ProdDate", "$gYear-$gMonth-$gDay");
 $ProdRelServer = &fDefault("ProdRelServer", "$ProdRelServer", "release.COMPANY.com");
 $ProdRelRoot = &fDefault("ProdRelRoot", "$ProdRelRoot", "/release/package");
+$RELEASE = &fDefault("RELEASE", "$RELEASE", "0");
 
 # ---------
 # Construct initial values or transform existing values
@@ -605,44 +664,43 @@ if ((-d ".svn") or (-d "_svn")) {
 # -------------------
 # Override and set variables, based on RELEASE, and other var.
 
-$ProdDesc .= ($ProdBuild) ? " / Build=$ProdBuild" : "";
-$ProdDesc .= ($ProdSvnVer) ? " / SvnVer=$ProdSvnVer" : "";
 
-if ("$ProdTPVer" ne "") {
-	$ProdDesc = "$ProdDesc / TPVer=$ProdTPVer";
+if ("$ProdSvnVer" ne "") {
+	$ProdDesc .= " / SvnVer=$ProdSvnVer";
+}
+
+if ("$ProdSupport" ne "") {
+	$ProdVendor .= " / $ProdSupport";
 }
 
 if ("$ProdTPVer" ne "") {
-	$ProdTPCopyright = &fDefault("ProdTPCopyright", "$ProdTPCopyright", "Copyright $ProdVendor $gYear. All rights reserved.");
+	$ProdDesc .= " / TPVer=$ProdTPVer";
 }
 
 if ("$ProdTPCopyright" ne "") {
-	$ProdCopyright = $ProdTPCopyright;
+	$ProdCopyright .= " / $ProdTPCopyright";
 }
 
 if ("$ProdTPVendor" ne "") {
-	$ProdVendor = "$ProdTPVendor / $ProdVendor";
+	$ProdVendor .= " / $ProdTPVendor";
 }
 
 $ProdWinVer = "$ProdVer";
 
+$ProdBuild =~ tr/0123456789./0123456789./cd;
+$ProdTag = &fDefault("ProdTag", "$ProdTag", "tag-$ProdVer");
+$ProdRelDir = $ProdRelRoot . "/released/" . $ProdRelCategory;
+$ProdDevDir = $ProdRelRoot . "/development/" . $ProdRelCategory;
 if ("$RELEASE" eq "1") {
-	$ProdTag = &fDefault("ProdTag", "$ProdTag", "REL-$ProdVer-$ProdBuild");
-	$ProdBuild =~ tr/0123456789./0123456789./cd;
 	$ProdPackager = "RE";
-	$ProdRelDir = $ProdRelRoot . "/released/" . $ProdRelCategory;
-} else {
-	$ProdTag = &fDefault("ProdTag", "$ProdTag", "DEV-$ProdVer-$ProdBuild");
-	$ProdBuild =~ tr/0123456789./0123456789./cd;
+}
+# ????
+if (("$RELEASE" eq "1") and ($MkVer le $cgMkVerBase)) {
 	$ProdRelDir = $ProdRelRoot . "/development/" . $ProdRelCategory;
 }
-$ProdDevDir = $ProdRelRoot . "/development/" . $ProdRelCategory;
 
 $ProdTag =~ tr/\-\._ :/\-\-\-\-\-/s;
 $ProdVer =~ tr/\-_ :/\-\-\-\-/s;
-
-$ProdVendor = "$ProdVendor / $ProdPackager";
-
 
 # -------------------
 # Validate
@@ -823,12 +881,18 @@ if ($gpExt =~ / epm /) {
 $epmHeader
 %product $ProdSummary
 %version $ProdVer
-%release $ProdBuild
 %packager $ProdPackager
 %vendor $ProdVendor
 %copyright $ProdCopyright
 %description $ProdDesc
 ";
+	if ($ProdRC != 0) {
+		print hF "%release rc.$ProdRC\n";
+	} elsif ($RELEASE == 0) {
+		print hF "%release t.$ProdBuildTime\n";
+	} else {
+		print hF "%release $ProdBuild\n";
+	}
 	if ("$ProdLicense" ne "") {
 		print hF "%license $ProdLicense\n";
 	}
@@ -904,7 +968,9 @@ foreach $i (
 	"ProdName",
 	"ProdAlias",
 	"ProdVer",
+	"ProdRC",
 	"ProdBuild",
+	"ProdBuildTime",
 	"ProdSvnVer",
 	"ProdWinVer",
 	"ProdDate",
@@ -921,7 +987,7 @@ foreach $i (
 	"ProdTPCopyright"
 ) {
 	$tVal=$$i;
-	print envF "$i=\"$tVal\"; export $i\n";
+	print envF "export $i=\"$tVal\"\n";
 	print hF "#define $i \"$tVal\"\n";
 	print javaF "public static final String $i = \"$tVal\";\n";
 	print csF "\"$i\", \"$tVal\",\n";
@@ -944,6 +1010,7 @@ print plF "$plFooter\n";
 # --------------
 # Add additional var to ver.env, ver.mak, and ver.xml
 foreach $i (
+	"MkVer",
 	"ProdDesc",
 	"ProdRelServer",
 	"ProdRelRoot",
@@ -952,11 +1019,12 @@ foreach $i (
 	"ProdDevDir",
 	"ProdTag",
 	"ProdOS",
-	"ProdArch",
-	"MkVer"
+	"ProdOSDist",
+	"ProdOSVer",
+	"ProdArch"
 ) {
 	$tVal=$$i;
-	print envF "$i=\"$tVal\"; export $i\n";
+	print envF "export $i=\"$tVal\"\n";
 	print makF "$i = $tVal\n";
 
 	$tValXML = $tVal;
@@ -966,9 +1034,14 @@ foreach $i (
 	print xmlF "<$i>$tValXML</$i>\n";
 }
 
-# Create a variable with the value of ProdOS
-print envF "ProdOS" . $ProdOS . "=1; export ProdOS" . $ProdOS . "\n";
+# Create a variables for use in epm.list file
+print envF "export $ProdOS=1\n";
+print envF "export $ProdOSDist=1\n";
 
 print makF "$makFooter\n";
 print envF "$envFooter\n";
 print xmlF "$xmlFooter\n";
+
+if (-f $tVar{"envFile"}) {
+	chmod 0755, $tVar{"envFile"};
+}

@@ -1,0 +1,158 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>mkver.pl</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body id="_podtop_">
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#OPTIONS">OPTIONS</a></li>
+  <li><a href="#ERRORS">ERRORS</a></li>
+  <li><a href="#ENVIRONMENT">ENVIRONMENT</a></li>
+  <li><a href="#FILES">FILES</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
+</ul>
+
+<a href="#_podtop_"><h1 id="NAME">NAME</h1></a>
+
+<p>myver.pl</p>
+
+<a href="#_podtop_"><h1 id="SYNOPSIS">SYNOPSIS</h1></a>
+
+<pre><code>        mkver.pl [-h] [-d DEF] [-e &#39;EXT EXT ...&#39;]</code></pre>
+
+<a href="#_podtop_"><h1 id="DESCRIPTION">DESCRIPTION</h1></a>
+
+<p>mkver.pl is used to create standard include files, to define release variables, which are used to categorize and version a module or tool. Its main purpose is to normalized all of names and categorizations that are related to a product, and to provide one place for updating this information.</p>
+
+<p>Currently output files are:</p>
+
+<pre><code>        ver.cs - C# constants file
+        ver.env - bash shell definitions (use in Makefiles and scripts)
+        ver.epm - EPM package include file
+        ver.h - C include file
+        ver.java - Java include file
+        ver.mak - Makefile include file
+        ver.pl - Perl include file
+        ver.xml - XML file</code></pre>
+
+<p>If the DEF file is not found, a default DEF file, ver.sh, is created.</p>
+
+<p>The generated files will be put in the current directory. A (EXT)File variable can be defined for each EXT extention, to define the path and the name for each of the output files.</p>
+
+<p>Other extention related variable can be defined to specify header and footer text that should be output for each EXT: (EXT)Header, (EXT)Footer.</p>
+
+<p>The simplest way to see the default definitions and variable transformations is to run mkver.pl, and specify a DEF file that doesn&#39;t exist. You can then look at the DEF file that was created, and at the generated files.</p>
+
+<a href="#_podtop_"><h1 id="OPTIONS">OPTIONS</h1></a>
+
+<dl>
+
+<dt id="h--help"><b>-h|-help</b></dt>
+<dd>
+
+<p>This help</p>
+
+</dd>
+<dt id="d--def-DEF"><b>-d|-def DEF</b></dt>
+<dd>
+
+<p>Path and name of the master version definition file (DEF). The basename part of the file name will be used for the basename of the version include files.</p>
+
+<pre><code> Default: ./ver.sh
+ Default basename: ver</code></pre>
+
+</dd>
+<dt id="e--extension-EXT"><b>-e|-extension EXT</b></dt>
+<dd>
+
+<p>A space separated list of extentions, that will be generated. If no -e option is used, then all files will be generated.</p>
+
+<pre><code> Default: -e &#39;cs env epm h java mak pl xml&#39;</code></pre>
+
+</dd>
+<dt id="v--verbose"><b>-v|-verbose</b></dt>
+<dd>
+
+<p>Output warnings and notices. Errors will always be output.</p>
+
+</dd>
+<dt id="x-debug"><b>-x debug</b></dt>
+<dd>
+
+<p>Output debug messages.</p>
+
+</dd>
+</dl>
+
+<a href="#_podtop_"><h1 id="ERRORS">ERRORS</h1></a>
+
+<dl>
+
+<dt id="If-ERROR-appears-in-an-output-file-or-in-the-default-input-file-this-is-a-required-variable-that-has-to-be-manually-defined">If &quot;ERROR&quot; appears in an output file or in the default input file, this is a required variable that has to be manually defined.</dt>
+<dd>
+
+</dd>
+<dt id="Error:-Syntax-problem-with:-VARIABLE">Error: Syntax problem with: VARIABLE</dt>
+<dd>
+
+<p>The named variable has a syntax error.</p>
+
+</dd>
+<dt id="Error:-Could-not-find-directory:-DIR">Error: Could not find directory: DIR</dt>
+<dd>
+
+<p>The DIR specified for an output file, can not be found. Fix the (EXT)File variable&#39;s definition, and create the directory</p>
+
+</dd>
+<dt id="Error:-mkcver-or-the-definition-file-needs-to-be-updated">Error: mkcver or the definition file needs to be updated.</dt>
+<dd>
+
+</dd>
+<dt id="Warning:-Could-not-find-file:-VARIABLE-FILE">Warning: Could not find file: VARIABLE (FILE)&quot;</dt>
+<dd>
+
+<p>Either fix the variable definition, create the file, or clear the definition.</p>
+
+</dd>
+</dl>
+
+<a href="#_podtop_"><h1 id="ENVIRONMENT">ENVIRONMENT</h1></a>
+
+<p>$HOME, $RELEASE</p>
+
+<a href="#_podtop_"><h1 id="FILES">FILES</h1></a>
+
+<p>Input: ver.sh or DEF.sh</p>
+
+<p>Output: ver.EXT files</p>
+
+<a href="#_podtop_"><h1 id="SEE-ALSO">SEE ALSO</h1></a>
+
+<p>patch-emp-list(1), epm(1), epminstall(1), mkepmlist(1), epm.list(5)</p>
+
+<a href="#_podtop_"><h1 id="AUTHOR">AUTHOR</h1></a>
+
+<p>TurtleEngr</p>
+
+<a href="#_podtop_"><h1 id="HISTORY">HISTORY</h1></a>
+
+<p>MkVer=2.2</p>
+
+
+</body>
+
+</html>
+
+

@@ -1,0 +1,154 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>patch-epm-list</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body id="_podtop_">
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#OPTIONS">OPTIONS</a></li>
+  <li><a href="#EXAMPLES">EXAMPLES</a></li>
+  <li><a href="#FILES">FILES</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#Notes">Notes</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
+</ul>
+
+<p>(c) Copyright 2006</p>
+
+<a href="#_podtop_"><h1 id="NAME">NAME</h1></a>
+
+<p>patch-epm-list - patch up generated epm lists</p>
+
+<a href="#_podtop_"><h1 id="SYNOPSIS">SYNOPSIS</h1></a>
+
+<pre><code>        patch-epm-list -f[ile] PATCH-FILE [-h[elp]] [-d[ebug] N]
+                &lt;EPMFILE &gt;NEW-EPMFILE</code></pre>
+
+<a href="#_podtop_"><h1 id="DESCRIPTION">DESCRIPTION</h1></a>
+
+<p>Process the EPMFILE, from stdin, and output the results to stdout. The PATCH-FILE is a perl file that defines the files that need special processing. See the FILE section for the syntax details.</p>
+
+<p>&#39;\$&#39; in the file are replaced with &#39;$$&#39;.</p>
+
+<a href="#_podtop_"><h1 id="OPTIONS">OPTIONS</h1></a>
+
+<dl>
+
+<dt id="file-FILE"><b>-file FILE</b></dt>
+<dd>
+
+<p>This is the config file for the patch-epm-list script. It should be executable. See the FILE section for the syntax details.</p>
+
+</dd>
+<dt id="help"><b>-help</b></dt>
+<dd>
+
+<p>This help.</p>
+
+</dd>
+<dt id="debug"><b>-debug</b></dt>
+<dd>
+
+<p>If the debug level is set to 5 or more, debug text will be output to stderr.</p>
+
+</dd>
+</dl>
+
+<a href="#_podtop_"><h1 id="EXAMPLES">EXAMPLES</h1></a>
+
+<pre><code> File: epm.patch contains:
+        $pConf{&quot;/etc/hosts&quot;} = 1;
+        $pConf{&quot;/etc/php.ini&quot;} = 1;
+        $pDel{&quot;/usr&quot;} = 1;
+        $pDel{&quot;/usr/local&quot;} = 1;
+        $pOwner{&quot;/var/www/html&quot;} = &quot;apache apache&quot;;
+        $pPerm{&quot;/etc/php.ini&quot;} = &quot;310&quot;;
+        $pNoStrip{&quot;/usr/lib/libacl.a&quot;} = 1;
+ chmod a+rx epm.patch
+
+ mkepmlist -u root -g root --prefix / dist | \
+   patch-epm-list -f ./epm.patch &gt;epm.list</code></pre>
+
+<a href="#_podtop_"><h1 id="FILES">FILES</h1></a>
+
+<p>Config File:</p>
+
+<dl>
+
+<dt id="pConf-FILE-1"><b>$pConf{&quot;FILE&quot;} = 1;</b></dt>
+<dd>
+
+<p>If the fifth field matches any of the FILE keys, then these lines will have the leading &#39;f&#39; changed to a &#39;c&#39;.</p>
+
+</dd>
+<dt id="pDel-FILE-1"><b>$pDel{&quot;FILE&quot;} = 1;</b></dt>
+<dd>
+
+<p>If the fifth field matches any of the FILE keys, then these lines will not be output (i.e. they will be deleted).</p>
+
+</dd>
+<dt id="pNoStrip-FILE-1"><b>$pNoStrip{&quot;FILE&quot;} = 1;</b></dt>
+<dd>
+
+<p>If the fifth field matches any of the FILE keys, then those lines will have &quot;nostrip()&quot; appended.</p>
+
+</dd>
+<dt id="B-pOwner-var-www-html-USER-GROUP">B$pOwner{&quot;/var/www/html&quot;} = &quot;USER GROUP&quot;;&gt;</dt>
+<dd>
+
+<p>If the fifth field matches a FILE key, then the user and group will be changed for that line.</p>
+
+</dd>
+<dt id="pPerm-FILE-MODE"><b>$pPerm{&quot;FILE&quot;} = &quot;MODE&quot;;</b></dt>
+<dd>
+
+<p>If the fifth field matches a FILE key, then the permissions will be changed for that line. MODE is the octal format.</p>
+
+</dd>
+</dl>
+
+<a href="#_podtop_"><h1 id="SEE-ALSO">SEE ALSO</h1></a>
+
+<p>mkver.pl(1), epm(1), epminstall(1), mkepmlist(1), epm.list(5)</p>
+
+<p>mkepmlist, epm</p>
+
+<a href="#_podtop_"><h1 id="Notes">Notes</h1></a>
+
+<p>This isn&#39;t the only way to filter the epm.list file. awk is maybe a more more direct way to filter the epm list file.</p>
+
+<p>For exmaple:</p>
+
+<pre><code> mkepmlist -u root -g root --prefix / dist | \
+     awk &#39;
+         $1 == &#39;d&#39; &amp;&amp; $5 == &quot;/usr&quot;  { next } 
+         $1 == &#39;d&#39; &amp;&amp; $5 == &quot;/usr/local&quot;  { next } 
+         $1 == &#39;d&#39; &amp;&amp; $5 == &quot;/usr/local/bin&quot;  { next } 
+         { print $0 }
+     &#39; &gt;epm.list</code></pre>
+
+<a href="#_podtop_"><h1 id="AUTHOR">AUTHOR</h1></a>
+
+<p>TurtleEngr</p>
+
+<a href="#_podtop_"><h1 id="HISTORY">HISTORY</h1></a>
+
+<p>(c) Copyright 2006</p>
+
+
+</body>
+
+</html>
+
+

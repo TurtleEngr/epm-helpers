@@ -52,9 +52,10 @@ stderr.
 	$pOwner{"/var/www/html"} = "apache apache";
 	$pPerm{"/etc/php.ini"} = "310";
 	$pNoStrip{"/usr/lib/libacl.a"} = 1;
+ chmod a+rx epm.patch
 
  mkepmlist -u root -g root --prefix / dist | \
-   patch-epm-list -f epm.patch >epm.list
+   patch-epm-list -f ./epm.patch >epm.list
 
 =head1 FILES
 
@@ -95,9 +96,24 @@ mkver.pl(1), epm(1), epminstall(1), mkepmlist(1), epm.list(5)
 
 mkepmlist, epm
 
+=head1 Notes
+
+This isn't the only way to filter the epm.list file. awk is maybe a
+more more direct way to filter the epm list file.
+
+For exmaple:
+
+ mkepmlist -u root -g root --prefix / dist | \
+     awk '
+         $1 == 'd' && $5 == "/usr"  { next } 
+         $1 == 'd' && $5 == "/usr/local"  { next } 
+         $1 == 'd' && $5 == "/usr/local/bin"  { next } 
+     	 { print $0 }
+     ' >epm.list
+
 =head1 AUTHOR
 
-Bruce Rafnel
+TurtleEngr
 
 =head1 HISTORY
 
