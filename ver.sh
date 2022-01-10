@@ -25,7 +25,7 @@ export ProdRC=""
 # Release Candidate ver. Can be one or two numbers. If set:
 #  %release rc.ProdRC
 
-export ProdBuild="1"
+export ProdBuild="3"
 # [0-9.]*
 # Required
 # If RELEASE=1
