@@ -91,7 +91,7 @@ dist-clean : clean
 test-package : epm.list epm.require
 	-rm -rf pkg ver.epm >/dev/null 2>&1
 	mkdir pkg
-	export RELEASE=0; src/bin/mkver.pl -d ver.sh -e epm
+	export RELEASE=0; src/bin/mkver.pl -e epm
 	epm -v -f native -m linux-noarch --output-dir pkg $(ProdName) ver.epm
 	epm -v -f portable -m linux-noarch --output-dir pkg $(ProdName) ver.epm
 
@@ -104,7 +104,7 @@ package : epm.list epm.require
 	# Set ProdRC for Release Candidate packages
 	-rm -rf pkg ver.epm >/dev/null 2>&1
 	mkdir pkg
-	export RELEASE=1; src/bin/mkver.pl -d ver.sh -e epm
+	export RELEASE=1; src/bin/mkver.pl -e epm
 	epm -v -f native -m linux-noarch --output-dir pkg $(ProdName) ver.epm
 	epm -v -f portable -m linux-noarch --output-dir pkg $(ProdName) ver.epm
 
@@ -132,7 +132,7 @@ clean-rc-release :
 # Work Targets
 
 ver.mak ver.epm ver.env : ver.sh src/bin/mkver.pl src/bin/patch-epm-list
-	src/bin/mkver.pl -d ver.sh -e 'mak env epm'
+	src/bin/mkver.pl -e 'mak env epm'
 
 doc : $(mDoc) src/doc/ver.sh.default
 
