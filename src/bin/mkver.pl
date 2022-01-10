@@ -891,7 +891,7 @@ $epmHeader
 	} elsif ($RELEASE == 0) {
 		print hF "%release t.$ProdBuildTime\n";
 	} else {
-		print hF "%release $ProdBuild $RELEASE\n";
+		print hF "%release $ProdBuild\n";
 	}
 	if ("$ProdLicense" ne "") {
 		print hF "%license $ProdLicense\n";

@@ -65,14 +65,14 @@ build epm.list : clean doc ver.mak ver.epm
 	-mkdir -p doc
 	mkdir -p dist/usr/local/bin
 	mkdir -p dist/usr/local/man/man1
-	mkdir -p dist/usr/local/share/doc/epm-helpers
+	mkdir -p dist/usr/local/share/doc/epm-helper
 	cd src/bin; chmod a+rx *
 	cp src/bin/* dist/usr/local/bin
 	pod2man src/bin/mkver.pl >dist/usr/local/man/man1/mkver.pl.1
 	pod2man src/bin/patch-epm-list >dist/usr/local/man/man1/patch-epm-list.1
 	gzip dist/usr/local/man/man1/*
-	cp src/doc/* dist/usr/local/share/doc/epm-helpers
-	cp README.md dist/usr/local/share/doc/epm-helpers
+	cp src/doc/* dist/usr/local/share/doc/epm-helper
+	cp README.md dist/usr/local/share/doc/epm-helper
 	find dist -executable -exec chmod a+rx {} \;
 	mkepmlist -u root -g root --prefix / dist | src/bin/patch-epm-list -f ./epm.patch >epm.list
 
@@ -92,25 +92,25 @@ dist-clean : clean
 test-package : epm.list ver.epm epm.require
 	-rm -rf pkg >/dev/null 2>&1
 	mkdir pkg
-	export RELEASE=0; . ./ver.env; epm -v -f native -m linux-noarch --output-dir pkg epm-helpers ver.epm
-	export RELEASE=0; . ./ver.env; epm -v -f portable -m linux-noarch --output-dir pkg epm-helpers ver.epm
+	export RELEASE=0; . ./ver.env; epm -v -f native -m linux-noarch --output-dir pkg epm-helper ver.epm
+	export RELEASE=0; . ./ver.env; epm -v -f portable -m linux-noarch --output-dir pkg epm-helper ver.epm
 
 test-release :
 
 clean-test-release :
-	# Remove all epm-helpers packages from repo
+	# Remove all epm-helper packages from repo
 
 package : epm.list ver.epm epm.require
 	# Set ProdRC for Release Candidate packages
 	-rm -rf pkg >/dev/null 2>&1
 	mkdir pkg
-	export RELEASE=1; . ./ver.env; epm -v -f native -m linux-noarch --output-dir pkg epm-helpers ver.epm
-	export RELEASE=1; . ./ver.env; epm -v -f portable -m linux-noarch --output-dir pkg epm-helpers ver.epm
+	export RELEASE=1; . ./ver.env; epm -v -f native -m linux-noarch --output-dir pkg epm-helper ver.epm
+#	export RELEASE=1; . ./ver.env; epm -v -f portable -m linux-noarch --output-dir pkg epm-helper ver.epm
 
 release :
 
 clean-rc-release :
-	# Remove all epm-helpers Release Candidates from repo
+	# Remove all epm-helper Release Candidates from repo
 
 # --------------------
 # Work Targets
@@ -122,17 +122,17 @@ doc : $(mDoc) src/doc/ver.sh.default
 
 src/doc/ver.sh.default : src/bin/mkver.pl
 	-mkdir tmp
-	cd tmp; ../src/bin/mkver.pl -e env >/dev/null 2>&1
+	cd tmp; ../src/bin/mkver.pl -e env
 	cp -f tmp/ver.sh src/doc/ver.sh.default
 
 src/doc/mkver.pl.html : src/bin/mkver.pl
-	pod2html --title="$(notdir $?)" $(mHtmlOpt) $? >$@
+	pod2html --title="$(notdir $?)" $(mHtmlOpt) <$? >$@
 
 src/doc/patch-epm-list.html : src/bin/patch-epm-list
-	pod2html --title="$(notdir $?)" $(mHtmlOpt) $? >$@
+	pod2html --title="$(notdir $?)" $(mHtmlOpt) <$? >$@
 
 src/doc/mkver.pl.md : src/bin/mkver.pl
-	pod2markdown $? >$?
+	pod2markdown <$? >$@
 
 src/doc/patch-epm-list.md : src/bin/patch-epm-list
-	pod2markdown $? >$?
+	pod2markdown <$? >$@

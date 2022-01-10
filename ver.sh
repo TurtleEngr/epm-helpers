@@ -8,7 +8,7 @@
 # still work with newer versions of mkver.pl)
 export MkVer="2.2"
 
-export ProdName="epm-helpers"
+export ProdName="epm-helper"
 # One word [-a-z0-9]
 # Required
 # %provides ProdName
@@ -35,7 +35,7 @@ export ProdBuild="1"
 # If RELEASE=0 or unset, then use current time (UTC): %Y.%m.%d.%H.%M
 #  %release t.ProdBuildTime
 
-export ProdSummary="epm-helpers are programs work with the EPM tool."
+export ProdSummary="epm-helper are programs work with the EPM tool."
 # All on one line (< 80 char)
 # %product ProdSummary
 
@@ -61,11 +61,11 @@ export ProdDate=""
 # 20[0-9][0-9]-[01][0-9]-[0123][0-9]
 # Current date (UTC) if empty
 
-export ProdLicense="dist/usr/local/share/doc/epm-helpers/LICENSE"
+export ProdLicense="dist/usr/local/share/doc/epm-helper/LICENSE"
 # Required
 # %license ProdLicense
 
-export ProdReadMe="dist/usr/local/share/doc/epm-helpers/README.md"
+export ProdReadMe="dist/usr/local/share/doc/epm-helper/README.md"
 # Required
 # %readme ProdReadMe
 
