@@ -498,7 +498,7 @@ export ProdBuild='1'
 # If RELEASE=1, and ProdRC=''
   # %release test.ProdBuild
 
-# Generated ProdBuildTime=YYYY.MM.DD.hh.mm
+# Generated: ProdBuildTime=YYYY.MM.DD.hh.mm
   # If RELEASE=0, or empty, or unset, then use
   # current time (UTC): %Y.%m.%d.%H.%M
     # %release ProdBuildTime
@@ -552,7 +552,7 @@ export ProdRelCategory=\"software/ThirdParty/\$ProdName\"
 # Generated: ProdRelDir=$ProdRelRoot/released/$ProdRelCategory
 # Generated: ProdDevDir=$ProdRelRoot/development/$ProdRelCategory
 
-# Generated: ProdTag=tag-ProdVer
+# Generated: ProdTag=tag-ProdVer-ProdBuild
 # (All \".\" in ProdVer converted to \"-\")
 
 # Generated: ProdOSDist
@@ -704,7 +704,7 @@ if ("$ProdTPVendor" ne "") {
 $ProdWinVer = "$ProdVer";
 
 $ProdBuild =~ tr/0123456789./0123456789./cd;
-$ProdTag = &fDefault("ProdTag", "$ProdTag", "tag-$ProdVer");
+$ProdTag = &fDefault("ProdTag", "$ProdTag", "tag-$ProdVer-$ProdBuild");
 $ProdRelDir = $ProdRelRoot . "/released/" . $ProdRelCategory;
 $ProdDevDir = $ProdRelRoot . "/development/" . $ProdRelCategory;
 if ($RELEASE != 0) {
@@ -1038,7 +1038,7 @@ foreach $i (
 ) {
         $tVal=$$i;
         print envF "export $i=\"$tVal\"\n";
-        print makF "$i = $tVal\n";
+        print makF "$i=$tVal\n";
 
         $tValXML = $tVal;
         $tValXML =~ s/\&/\&amp;/;

@@ -1,7 +1,9 @@
 = TODO
 
-* Implement better tests
+* Implement tests for the different cases. E.g. RELEASE
 
-* Imp Makefile release targets
+* Cleanup Makefile release targets to push packages to server release dirs
 
-* Refactor mkver.sh. Replace "foreach Type" with functions.
+* Makefile release targets for deb repo push
+
+* Refactor mkver.sh. Replace "foreach Type" with functions for each type.
