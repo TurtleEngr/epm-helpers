@@ -62,7 +62,6 @@ first : ver.mak ver.epm
 
 build epm.list : clean doc ver.mak ver.epm
 	-rm -rf dist >/dev/null 2>&1
-	-mkdir -p doc
 	mkdir -p dist/usr/local/bin
 	mkdir -p dist/usr/local/man/man1
 	mkdir -p dist/usr/local/share/doc/epm-helper
