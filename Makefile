@@ -96,7 +96,7 @@ test-package : epm.list epm.require
 	epm -v -f native -m linux-noarch --output-dir pkg epm-helper ver.epm
 	epm -v -f portable -m linux-noarch --output-dir pkg epm-helper ver.epm
 
-test-release :
+test-release : TBD
 
 clean-test-release :
 	# Remove all epm-helper packages from repo
@@ -109,7 +109,22 @@ package : epm.list epm.require
 	epm -v -f native -m linux-noarch --output-dir pkg epm-helper ver.epm
 	epm -v -f portable -m linux-noarch --output-dir pkg epm-helper ver.epm
 
-release :
+release : ver.env ver.mak
+	. ./ver.env; echo "ssh $(ProdRelServer) mkdir -p $(ProdRelRoot)/released/software/ThirdParty/epm"
+	-. ./ver.env; ssh $(ProdRelServer) mkdir -p $(ProdRelRoot)/released/software/ThirdParty/epm
+	. ./ver.env; ssh $(ProdRelServer test -d $(ProdRelRoot)/released/software/ThirdParty/epm
+	. ./ver.env; rsync -zP pkg/$(ProdName)-* $(ProdRelServer):$(ProdRelRoot)/released/software/ThirdParty/epm
+
+tag : ver.env ver.mak
+	-git commit -am Updated
+	. ./ver.env; git tag -f -a -m "Released to: $(ProdRelServer):$(ProdRelDir)" $(ProdTag)-$(ProdBuild)
+	date -u +'%F %R UTC' >>VERSION
+	. ./ver.env; echo "$(ProdTag)-$(ProdBuild)" >>VERSION
+	. ./ver.env; echo "Released: $$(ls pkg)" >>VERSION
+	. ./ver.env; echo "to: $(ProdRelServer):$(ProdRelRoot)/released/software/ThirdParty/epm" >>VERSION
+	#git commit -am Updated
+	#git push origin develop
+	#git push --tags -f
 
 clean-rc-release :
 	# Remove all epm-helper Release Candidates from repo

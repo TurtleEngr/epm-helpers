@@ -77,9 +77,9 @@ export ProdTPVer=""
 export ProdTPCopyright=""
 # Appended to %copyright
 
-export ProdRelServer="rel.DOMAIN.com"
-export ProdRelRoot="/release/package"
-export ProdRelCategory="software/ThirdParty/$ProdName"
+export ProdRelServer="moria.whyayh.com"
+export ProdRelRoot="/rel"
+export ProdRelCategory="software/ThirdParty/$ProdName/$ProdOS"
 # Generated: ProdRelDir=$ProdRelRoot/released/$ProdRelCategory
 # Generated: ProdDevDir=$ProdRelRoot/development/$ProdRelCategory
 
