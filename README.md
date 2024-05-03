@@ -12,4 +12,4 @@ For help type:
 Documentation can also be found at:
 /usr/local/share/doc/epm-helper/
 
-Package repo: TBD
+Package repo: https://moria.whyayh.com/rel/released/software/ThirdParty/epm/
